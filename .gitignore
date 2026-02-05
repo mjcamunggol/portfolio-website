@@ -1,0 +1,12 @@
+# Secrets
+.env
+
+# Python
+__pycache__/
+*.pyc
+
+# Virtual env
+venv/
+
+# AI vector storage
+vectorstore/
