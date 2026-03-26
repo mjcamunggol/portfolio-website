@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Marisa — AI & Web Developer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-follower" id="cursorFollower"></div>
+
+  <header class="navbar" id="navbar">
+    <a href="#hero" class="nav-logo"><span class="logo-bracket">[</span>MARISA CAMUNGGOL<span class="logo-bracket">]</span></a>
+    <nav class="nav-links">
+      <a href="#about"    class="nav-link">About</a>
+      <a href="#projects" class="nav-link">Projects</a>
+      <a href="#skills"   class="nav-link">Skills</a>
+      <a href="#contact"  class="nav-link">Contact</a>
+    </nav>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+      <span class="toggle-icon sun">☀</span>
+      <span class="toggle-icon moon">☪</span>
+    </button>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </header>
+
+  <div class="mobile-nav" id="mobileNav">
+    <a href="#about"    class="mobile-nav-link">About</a>
+    <a href="#projects" class="mobile-nav-link">Projects</a>
+    <a href="#skills"   class="mobile-nav-link">Skills</a>
+    <a href="#contact"  class="mobile-nav-link">Contact</a>
+  </div>
+
+  <section class="section about" id="about">
+    <div class="container" style="margin-top: 5%;">
+        <a class="hero-tag" href="viewmore.html"> < back</a>
+        <h1 class="section-title" style="margin-top: 5%;">The No-Spaghetti Breadboard: Building a Custom Hexadecimal 7-Segment Decoder</h1>
+        
+        <br><img src="0326 (1).gif">
+        
+        
+
+
+
+        <br><br><p>Every computer engineering undergrad eventually faces the ultimate test of patience: taking a complex combinational logic circuit from paper to a physical breadboard without it turning into a tangled nest of wires.
+
+<br><br>For my latest hardware project, I decided to bypass commercial, ready-made decoder ICs and build a custom 4-bit hexadecimal to 7-segment decoder completely from scratch.
+
+<br><br>The goal? Decode standard 4-bit binary inputs (0000 to 1111) into alphanumeric hexadecimal characters (0-F) on a Common Cathode display, using only standard 7400-series TTL logic gates. Oh, and the wiring had to be absolutely flawless—no diagonals, no overlapping, and strictly flat "Manhattan-style" routing.
+
+<br><br>Here is a look at how I went from truth tables to a fully functional, PCB-style breadboard array.</p>
+        <br><h3>Phase 1: The Math and The Maps</h3>
+        <p>You can't build the hardware until the math is perfect. Since I was using a Common Cathode display, the logic needed to be active-HIGH (a 1 turns the segment ON).
+
+<br><br>I mapped out the desired outputs for segments a through g for all 16 binary states. To keep the hardware footprint as small as possible, I used Karnaugh Maps (K-maps) to simplify the logic into Sum of Products (SOP) equations.
+
+<br><br>Some segments optimized beautifully. Segment g, for instance, factored out into an elegant mix of basic variables and an Exclusive-OR (XOR) gate. Other segments, like b and f, required massive 6-term and 7-term equations that would put my hardware constraints to the test.</p>
+        
+        <br><h3>Phase 2: Hardware Constraints & Gate Cascading</h3>
+        <p>In a perfect simulator, you have infinite logic gates of any size. In the real world, you are limited to the ICs sitting on your desk.
+
+<br><br>My initial design called for dedicated 3-input and 4-input OR and NAND gates. Mid-build, I ran out of them. Instead of waiting for parts, I adapted the circuit to rely heavily on cascading 2-input gates (the 7432 Quad OR and 7400 Quad NAND).
+
+<br><br>Cascading OR gates is straightforward thanks to associative logic—you just build a tree topology. But cascading NAND gates is a different beast because every gate inverts the signal. To sum six or seven inverted product terms using only 2-input NANDs, I had to strategically route intermediate signals through additional NAND gates acting as inverters to keep the Boolean logic intact. It increased the chip count, but it proved the math was bulletproof.</p>
+        
+        <br><h3>Phase 3: The "Manhattan" Routing Standard</h3>
+        <p>The most challenging (and rewarding) part of this project was the physical build. I set strict rules for the wiring to ensure the circuit was readable and easy to debug:
+
+No overlapping wires. * No diagonal runs. Every bend must be exactly 90 degrees.
+
+No "spaghetti." Wires must sit completely flush against the breadboard.
+
+To achieve this, I treated the layout like a factory assembly line spread across three linked 830-tie point breadboards:
+
+Board 1 (The Input Stage): Houses the DIP switches, Hex Inverters (7404), and basic XOR (7486) / AND (7408) gates to generate the foundational 1-variable and 2-variable terms.
+
+Board 2 (The Heavy Processing Stage): Handles the complex 3-variable and 4-variable terms using 7410 and 7420 NAND chips.
+
+Board 3 (The Summing Stage): The convergence point. This board holds the cascaded 7432 OR and 7400 NAND gate trees that sum the final equations and push the signals through current-limiting resistors to the display.
+
+To adhere to the "no overlap" rule, I left 3-column empty "highways" between the ICs. If a signal needed to cascade to the next gate, it exited the chip, made a 90-degree turn into the highway, traveled down the board, and U-turned back into the next input pin.</p>
+         
+        
+        <br><h3>The Result</h3>
+        <p>There is nothing quite like flipping a DIP switch to 1110 and watching the display instantly light up with a perfect, bright red E.
+
+This project was a deep dive into the realities of digital logic design. It bridged the gap between theoretical Boolean algebra and the physical realities of TTL chip constraints, power distribution, and signal routing.</p>
+        <br><br><img src="2026-03-26-15-32-13.png">
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <p>Designed &amp; built by <span class="accent">Marisa Camunggol</span> — <span id="year">2026</span></p>
+      <a href="#hero" class="back-top">↑ Top</a>
+    </div>
+  </footer>
+
+  <!-- AI CHATBOT -->
+  <button class="chat-trigger" id="chatTrigger" aria-label="Open AI Assistant">
+    <span class="chat-trigger-icon open-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+      </svg>
+    </span>
+    <span class="chat-trigger-icon close-icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </span>
+    <span class="chat-pulse"></span>
+  </button>
+
+  <div class="chat-window glass" id="chatWindow" role="dialog" aria-label="AI Portfolio Assistant">
+    <div class="chat-header">
+      <div class="chat-header-info">
+        <div class="chat-avatar">
+          <span>AI</span>
+          <span class="chat-online-dot"></span>
+        </div>
+        <div>
+          <p class="chat-name">Portfolio Assistant</p>
+          <p class="chat-status">Powered by Llama 3 · Online</p>
+        </div>
+      </div>
+      <button class="chat-clear" id="chatClear" title="Clear chat">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="3 6 5 6 21 6"/>
+          <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+          <path d="M10 11v6M14 11v6"/>
+          <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+        </svg>
+      </button>
+    </div>
+    <div class="chat-messages" id="chatMessages">
+      <div class="chat-msg bot">
+        <div class="msg-bubble">
+          👋 Hi! Marisa here. Ask me anything about my projects, skills, or background!
+        </div>
+        <span class="msg-time">Just now</span>
+      </div>
+      <div class="chat-suggestions" id="chatSuggestions">
+        <button class="chip">What projects have you built?</button>
+        <button class="chip">Tell me about your AI work</button>
+        <button class="chip">What tech stack do you use?</button>
+        <button class="chip">Are you available for hire?</button>
+      </div>
+    </div>
+    <div class="chat-typing" id="chatTyping">
+      <span></span><span></span><span></span>
+    </div>
+    <div class="chat-input-area">
+      <textarea class="chat-input" id="chatInput" placeholder="Ask anything about my work..." rows="1" aria-label="Type your message"></textarea>
+      <button class="chat-send" id="chatSend" aria-label="Send message">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

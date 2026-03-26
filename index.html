@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Marisa — AI & Web Developer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-follower" id="cursorFollower"></div>
+
+  <header class="navbar" id="navbar">
+    <a href="#hero" class="nav-logo"><span class="logo-bracket">[</span>MARISA CAMUNGGOL<span class="logo-bracket">]</span></a>
+    <nav class="nav-links">
+      <a href="#about"    class="nav-link">About</a>
+      <a href="#projects" class="nav-link">Projects</a>
+      <a href="#skills"   class="nav-link">Skills</a>
+      <a href="#contact"  class="nav-link">Contact</a>
+    </nav>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+      <span class="toggle-icon sun">☀</span>
+      <span class="toggle-icon moon">☪</span>
+    </button>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </header>
+
+  <div class="mobile-nav" id="mobileNav">
+    <a href="#about"    class="mobile-nav-link">About</a>
+    <a href="#projects" class="mobile-nav-link">Projects</a>
+    <a href="#skills"   class="mobile-nav-link">Skills</a>
+    <a href="#contact"  class="mobile-nav-link">Contact</a>
+  </div>
+
+  <section class="hero" id="hero">
+    <canvas id="heroCanvas"></canvas>
+    <div class="hero-content">
+      <div class="hero-tag reveal-item">// computer engineering student</div>
+      <h1 class="hero-title">
+        <span class="hero-line reveal-item delay-1">Building</span>
+        <span class="hero-line accent reveal-item delay-2">Intelligent</span>
+        <span class="hero-line reveal-item delay-3">Systems</span>
+      </h1>
+      <p class="hero-sub reveal-item delay-4">
+        AI · Automation · Web Development · System Design · Architecture — crafting impactful digital and hardware solutions from the Philippines.
+      </p>
+      <div class="hero-cta reveal-item delay-5">
+        <a href="#projects" class="btn btn-primary">View Work</a>
+        <a href="#contact"  class="btn btn-ghost">Get in Touch</a>
+      </div>
+    </div>
+    <div class="scroll-hint">
+      <span class="scroll-line"></span>
+      <span class="scroll-text">scroll</span>
+    </div>
+  </section>
+
+  <section class="section about" id="about">
+    <div class="container">
+      <div class="section-label reveal-item">01 — About</div>
+      <div class="about-grid">
+        <div class="about-text">
+          <h2 class="section-title reveal-item">Who I am<span class="dot accent">.</span></h2>
+          <p class="reveal-item delay-1">I'm a Computer Engineering student with a passion for AI, Web Development, and System Design. With a unique background in Architecture, I love building things that matter — from sign language recognition systems to food donation platforms.</p>
+          <p class="reveal-item delay-2">My work sits at the intersection of accessible technology and real-world impact. I believe architecture and engineering should serve people hand-in-hand.</p>
+          <div class="about-stats reveal-item delay-3">
+            <div class="stat"><span class="stat-num">3+</span><span class="stat-label">Key Projects</span></div>
+            <div class="stat"><span class="stat-num">AI</span><span class="stat-label">Specialized</span></div>
+            <div class="stat"><span class="stat-num">PH</span><span class="stat-label">Based</span></div>
+          </div>
+        </div>
+        <div class="about-visual reveal-item delay-2">
+          <div class="about-card glass">
+            <div class="about-avatar">
+              <div class="avatar-placeholder">
+                <span>QR</span>
+                <div class="avatar-ring"></div>
+              </div>
+            </div>
+            <h3 class="about-name">Marisa Camunggol</h3>
+            <p class="about-role">CompE Student &amp; AI Developer</p>
+            <p class="about-role">mjcamunggol@gmail.com</p>
+            <div class="about-badges">
+              <span class="badge">AI/ML</span>
+              <span class="badge">Computer Vision</span>
+              <span class="badge">Web Dev</span>
+            </div>
+          </div>
+          <a class="btn btn-primary" style="margin-top: 5%; margin-left: 20%;"><i class="fa fa-download"></i>Download CV</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!--TECH STACK BANNER-->
+  <section style="margin-top: -8%;">
+    <div class="container" style="padding: 0;">
+    <div class="banner-section" id="row1">
+      <div class="reveal-item track" id="track1"></div>
+    </div>
+  </section>
+
+  <section class="section skills" id="skills">
+    <div class="container">
+      <div class="section-label reveal-item">02 — Toolkit</div>
+      <h2 class="section-title reveal-item">Skills &amp; Tools<span class="dot accent">.</span></h2>
+      <div class="skills-grid">
+        <div class="skill-group reveal-item delay-1">
+          <h3 class="skill-group-title">AI / ML</h3>
+          <ul class="skill-list">
+            <li class="skill-item"><span class="skill-name">Python / TensorFlow</span><span class="skill-bar"><span class="skill-fill" data-level="88"></span></span></li>
+            <li class="skill-item"><span class="skill-name">OpenCV / MediaPipe</span><span class="skill-bar"><span class="skill-fill" data-level="82"></span></span></li>
+            <li class="skill-item"><span class="skill-name">LLM Integration</span><span class="skill-bar"><span class="skill-fill" data-level="76"></span></span></li>
+            <li class="skill-item"><span class="skill-name">Data Processing</span><span class="skill-bar"><span class="skill-fill" data-level="80"></span></span></li>
+          </ul>
+        </div>
+        <div class="skill-group reveal-item delay-2">
+          <h3 class="skill-group-title">Web Dev</h3>
+          <ul class="skill-list">
+            <li class="skill-item"><span class="skill-name">HTML / CSS / JS</span><span class="skill-bar"><span class="skill-fill" data-level="95"></span></span></li>
+            <li class="skill-item"><span class="skill-name">React / Node.js</span><span class="skill-bar"><span class="skill-fill" data-level="85"></span></span></li>
+            <li class="skill-item"><span class="skill-name">Three.js / WebGL</span><span class="skill-bar"><span class="skill-fill" data-level="89"></span></span></li>
+            <li class="skill-item"><span class="skill-name">REST / Express</span><span class="skill-bar"><span class="skill-fill" data-level="70"></span></span></li>
+          </ul>
+        </div>
+        <div class="skill-group reveal-item delay-3">
+          <h3 class="skill-group-title">Systems</h3>
+          <ul class="skill-list">
+            <li class="skill-item"><span class="skill-name">System Design</span><span class="skill-bar"><span class="skill-fill" data-level="78"></span></span></li>
+            <li class="skill-item"><span class="skill-name">Databases</span><span class="skill-bar"><span class="skill-fill" data-level="80"></span></span></li>
+            <li class="skill-item"><span class="skill-name">API Integration</span><span class="skill-bar"><span class="skill-fill" data-level="88"></span></span></li>
+            <li class="skill-item"><span class="skill-name">DevOps Basics</span><span class="skill-bar"><span class="skill-fill" data-level="65"></span></span></li>
+          </ul>
+        </div>
+        <div class="skill-group reveal-item delay-4">
+          <h3 class="skill-group-title">Visualizations</h3>
+          <ul class="skill-list">
+            <li class="skill-item"><span class="skill-name">AutoCAD / SketchUp / 3D Render</span><span class="skill-bar"><span class="skill-fill" data-level="78"></span></span></li>
+            <li class="skill-item"><span class="skill-name">Adobe Photoshop / Canva</span><span class="skill-bar"><span class="skill-fill" data-level="78"></span></span></li>
+            <li class="skill-item"><span class="skill-name">UI / UX</span><span class="skill-bar"><span class="skill-fill" data-level="85"></span></span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section projects" id="projects">
+    <div class="container">
+      <div class="section-label reveal-item">03 — Work</div>
+      <h2 class="section-title reveal-item">Selected Projects<span class="dot accent">.</span></h2>
+      <div class="projects-grid">
+        <!--put 3 articles here--> 
+      </div>
+      <a class="btn btn-ghost" style="margin-top:5%;" href="viewmore.html">View more</a>
+    </div>
+  </section>
+
+  <section class="section donate-section" id="donate">
+    <div class="container">
+      <div class="section-label reveal-item">04 — Support</div>
+      <h2 class="section-title reveal-item">Support My Work<span class="dot accent">.</span></h2>
+      <p class="donate-sub reveal-item delay-1">
+        If my projects have helped or inspired you, consider buying me a coffee ☕<br>
+        Payments are securely processed via <strong>PayMongo</strong>.
+      </p>
+      <div class="donate-card glass reveal-item delay-2">
+        <div class="pay-methods">
+          <div class="pay-badge gcash"><span class="pay-icon">G</span><span>GCash</span></div>
+          <div class="pay-badge card"><span class="pay-icon">💳</span><span>Card</span></div>
+          <div class="pay-badge grab"><span class="pay-icon">🟢</span><span>GrabPay</span></div>
+        </div>
+        <div class="preset-amounts">
+          <button class="amount-btn" data-amount="100">₱100</button>
+          <button class="amount-btn active" data-amount="250">₱250</button>
+          <button class="amount-btn" data-amount="500">₱500</button>
+          <button class="amount-btn" data-amount="1000">₱1,000</button>
+        </div>
+        <div class="custom-amount-wrap">
+          <label for="customAmount" class="custom-label">Or enter custom amount (₱)</label>
+          <div class="custom-input-wrap">
+            <span class="peso-sign">₱</span>
+            <input type="number" id="customAmount" class="custom-input" placeholder="Enter amount" min="50" max="100000" />
+          </div>
+        </div>
+        <button class="btn btn-donate" id="donateBtn">
+          <span class="donate-btn-text">Donate ₱250</span>
+          <span class="donate-arrow">→</span>
+          <span class="donate-spinner hidden" id="donateSpinner">⟳</span>
+        </button>
+        <p class="donate-note">Secured by PayMongo · SSL Encrypted · No account needed</p>
+      </div>
+      <div class="payment-banner success" id="paySuccess" style="display:none">
+        <span>🎉</span><div><strong>Thank you for your support!</strong><p>Your donation was received. You rock!</p></div>
+      </div>
+      <div class="payment-banner cancel" id="payCancel" style="display:none">
+        <span>↩</span><div><strong>Payment cancelled.</strong><p>No worries — feel free to try again anytime.</p></div>
+      </div>
+    </div>
+  </section>
+
+
+
+  <section class="section contact" id="contact">
+    <div class="container">
+      <div class="section-label reveal-item">05 — Connect</div>
+      <h2 class="section-title reveal-item">Let's Build<span class="dot accent">.</span></h2>
+      <p class="contact-sub reveal-item delay-1">Have a project in mind or just want to say hello?<br>My inbox is always open.</p>
+      <form class="contact-form reveal-item delay-2" id="contactForm" novalidate>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" placeholder="Your Name Here" required />
+            <span class="form-line"></span>
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="your.email@domain.com" required />
+            <span class="form-line"></span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="subject">Subject</label>
+          <input type="text" id="subject" name="subject" placeholder="Project Inquiry" required />
+          <span class="form-line"></span>
+        </div>
+        <div class="form-group">
+          <label for="message">Message</label>
+          <textarea id="message" name="message" rows="5" placeholder="Tell me about your project..." required></textarea>
+          <span class="form-line"></span>
+        </div>
+        <button type="submit" class="btn btn-primary btn-send">
+          <span class="btn-text">Send Message</span>
+          <span class="btn-arrow">→</span>
+        </button>
+        <div class="form-success" id="formSuccess">Message sent! I'll be in touch soon.</div>
+      </form>
+      <div class="social-links reveal-item delay-3">
+        <a href="#" class="social-link">GitHub</a>
+        <a href="#" class="social-link">LinkedIn</a>
+        <a href="#" class="social-link">Discord</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <p>Designed &amp; built by <span class="accent">Marisa Camunggol</span> — <span id="year">2026</span></p>
+      <a href="#hero" class="back-top">↑ Top</a>
+    </div>
+  </footer>
+
+  <!-- AI CHATBOT -->
+  <button class="chat-trigger" id="chatTrigger" aria-label="Open AI Assistant">
+    <span class="chat-trigger-icon open-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+      </svg>
+    </span>
+    <span class="chat-trigger-icon close-icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </span>
+    <span class="chat-pulse"></span>
+  </button>
+
+  <div class="chat-window glass" id="chatWindow" role="dialog" aria-label="AI Portfolio Assistant">
+    <div class="chat-header">
+      <div class="chat-header-info">
+        <div class="chat-avatar">
+          <span>AI</span>
+          <span class="chat-online-dot"></span>
+        </div>
+        <div>
+          <p class="chat-name">Portfolio Assistant</p>
+          <p class="chat-status">Powered by Llama 3 · Online</p>
+        </div>
+      </div>
+      <button class="chat-clear" id="chatClear" title="Clear chat">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="3 6 5 6 21 6"/>
+          <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+          <path d="M10 11v6M14 11v6"/>
+          <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+        </svg>
+      </button>
+    </div>
+    <div class="chat-messages" id="chatMessages">
+      <div class="chat-msg bot">
+        <div class="msg-bubble">
+          👋 Hi! Marisa here. Ask me anything about my projects, skills, or background!
+        </div>
+        <span class="msg-time">Just now</span>
+      </div>
+      <div class="chat-suggestions" id="chatSuggestions">
+        <button class="chip">What projects have you built?</button>
+        <button class="chip">Tell me about your AI work</button>
+        <button class="chip">What tech stack do you use?</button>
+        <button class="chip">Are you available for hire?</button>
+      </div>
+    </div>
+    <div class="chat-typing" id="chatTyping">
+      <span></span><span></span><span></span>
+    </div>
+    <div class="chat-input-area">
+      <textarea class="chat-input" id="chatInput" placeholder="Ask anything about my work..." rows="1" aria-label="Type your message"></textarea>
+      <button class="chat-send" id="chatSend" aria-label="Send message">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

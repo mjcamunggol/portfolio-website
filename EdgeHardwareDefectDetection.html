@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Marisa — AI & Web Developer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-follower" id="cursorFollower"></div>
+
+  <header class="navbar" id="navbar">
+    <a href="#hero" class="nav-logo"><span class="logo-bracket">[</span>MARISA CAMUNGGOL<span class="logo-bracket">]</span></a>
+    <nav class="nav-links">
+      <a href="#about"    class="nav-link">About</a>
+      <a href="#projects" class="nav-link">Projects</a>
+      <a href="#skills"   class="nav-link">Skills</a>
+      <a href="#contact"  class="nav-link">Contact</a>
+    </nav>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+      <span class="toggle-icon sun">☀</span>
+      <span class="toggle-icon moon">☪</span>
+    </button>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </header>
+
+  <div class="mobile-nav" id="mobileNav">
+    <a href="#about"    class="mobile-nav-link">About</a>
+    <a href="#projects" class="mobile-nav-link">Projects</a>
+    <a href="#skills"   class="mobile-nav-link">Skills</a>
+    <a href="#contact"  class="mobile-nav-link">Contact</a>
+  </div>
+
+  <section class="section about" id="about">
+    <div class="container" style="margin-top: 5%;">
+        <a class="hero-tag" href="viewmore.html"> < back</a>
+        <h1 class="section-title" style="margin-top: 5%;">From Heavy to Featherweight: Building an Edge-Optimized Defect Detector</h1>
+        
+        <br><img src="0326(1).gif">
+
+        <br> <a href="https://github.com/mjcamunggol/Edge-Hardware-Defect-Detector" class="social-link" target="_blank" rel="noopener noreferrer">See in GitHub ↗</a>
+        
+        <br><br><p>When you're building computer vision projects, it's easy to train a massive model that runs beautifully on a high-end GPU. But what happens when you need to deploy that model to the edge—say, a resource-constrained microcontroller or a Raspberry Pi?<br><br>Recently, I set out to tackle this exact problem. I wanted to build a practical, high-speed object detection model to identify manufacturing defects on ballpoint pens, and more importantly, I needed to optimize it so it could actually run in the real world.<br><br>Here is how I built, trained, and shrank a computer vision model from scratch.</p>
+        <br><h3>Step 1: Curating the Dataset</h3>
+        <p>You can’t train a highly specific model without highly specific data. I started by generating my own custom dataset to ensure the algorithm learned the exact features of the anomaly.<br><br>I took 100 localized photos: 50 of standard, normal ballpens, and 50 featuring the specific "defect." From there, I brought the images into Roboflow, manually drawing bounding boxes and annotating every single photo to establish the ground truth. I split the data into a standard 80% training and 20% validation set and exported it in the YOLOv8 format.</p>
+        <br><img src="2026-03-26-14-24-15.png">
+        
+        <br><h3>Step 2: Offloading to the Cloud</h3>
+        <p>Training models locally is a great way to melt your laptop’s CPU. To keep my hardware safe and drastically speed up the process, I moved the pipeline to the cloud.<br><br>I spun up a Google Colab environment equipped with an NVIDIA T4 GPU. Instead of manually uploading files, I wrote a quick Python script to securely authenticate with the Roboflow API and pull the custom dataset directly into the cloud instance. It was a simple data ingestion step, but it made the workflow infinitely smoother.</p>
+        
+        
+        <br><h3>Step 3: Transfer Learning & The "YAML Hack"</h3>
+        <p>I didn’t want to reinvent the wheel by building an AI architecture from scratch for such a small dataset. Instead, I used Transfer Learning.<br><br>I grabbed YOLOv8-nano—an incredibly lightweight, state-of-the-art object detection model that already understands basic shapes and edges. By passing my 100 images through it for 50 epochs, I forced the model to rewire its final layers to specifically hunt for my pen defect.<br><br>Of course, no project goes perfectly smoothly. During setup, the training pipeline threw an error because of a missing validation split configuration. Rather than tearing down the whole dataset, I dug into the .yaml file and manually bypassed the error—a classic, quick-fix engineering hack that kept the rapid prototyping phase moving.</p>
+        <br><h3>Step 4: Edge Optimization (Quantization)</h3>
+        <p>This was the most critical part of the project. A raw PyTorch (.pt) model is far too heavy and slow for microcontrollers. If I wanted this to be viable for edge deployment, it needed to lose some weight.<br><br>I ran the model through a quantization process, compressing its mathematical precision into a Float16 TensorFlow Lite (.tflite) format. This resulted in defect_model.tflite—a drastically shrunken file size that significantly boosted the inference speed (Frames Per Second) without noticeably sacrificing detection accuracy.</p>
+        <br><img src="2026-03-26-14-30-20.png">
+        
+        <br><h3>The Result</h3>
+        <p>To validate the build, I wrote a quick test script using OpenCV to feed images into the .tflite model. It worked perfectly, drawing tight bounding boxes around the defects in real-time.<br><br>This project was a great hands-on dive into the full machine learning pipeline—from manual data annotation to cloud computing, and ultimately, model optimization. It proved that with the right quantization, you can pack powerful computer vision capabilities into incredibly small packages.</p>
+          <br>
+          <div style="display: flex;">
+            <img src="0326(2).gif">
+            <img src="0326(1).gif">
+          </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <p>Designed &amp; built by <span class="accent">Marisa Camunggol</span> — <span id="year">2026</span></p>
+      <a href="#hero" class="back-top">↑ Top</a>
+    </div>
+  </footer>
+
+  <!-- AI CHATBOT -->
+  <button class="chat-trigger" id="chatTrigger" aria-label="Open AI Assistant">
+    <span class="chat-trigger-icon open-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+      </svg>
+    </span>
+    <span class="chat-trigger-icon close-icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </span>
+    <span class="chat-pulse"></span>
+  </button>
+
+  <div class="chat-window glass" id="chatWindow" role="dialog" aria-label="AI Portfolio Assistant">
+    <div class="chat-header">
+      <div class="chat-header-info">
+        <div class="chat-avatar">
+          <span>AI</span>
+          <span class="chat-online-dot"></span>
+        </div>
+        <div>
+          <p class="chat-name">Portfolio Assistant</p>
+          <p class="chat-status">Powered by Llama 3 · Online</p>
+        </div>
+      </div>
+      <button class="chat-clear" id="chatClear" title="Clear chat">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="3 6 5 6 21 6"/>
+          <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+          <path d="M10 11v6M14 11v6"/>
+          <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+        </svg>
+      </button>
+    </div>
+    <div class="chat-messages" id="chatMessages">
+      <div class="chat-msg bot">
+        <div class="msg-bubble">
+          👋 Hi! Marisa here. Ask me anything about my projects, skills, or background!
+        </div>
+        <span class="msg-time">Just now</span>
+      </div>
+      <div class="chat-suggestions" id="chatSuggestions">
+        <button class="chip">What projects have you built?</button>
+        <button class="chip">Tell me about your AI work</button>
+        <button class="chip">What tech stack do you use?</button>
+        <button class="chip">Are you available for hire?</button>
+      </div>
+    </div>
+    <div class="chat-typing" id="chatTyping">
+      <span></span><span></span><span></span>
+    </div>
+    <div class="chat-input-area">
+      <textarea class="chat-input" id="chatInput" placeholder="Ask anything about my work..." rows="1" aria-label="Type your message"></textarea>
+      <button class="chat-send" id="chatSend" aria-label="Send message">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
