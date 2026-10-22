@@ -1,5 +1,3 @@
-const BACKEND_URL = 'http://localhost:3001';
-
 'use strict';
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -70,7 +68,6 @@ themeToggle.addEventListener('click', () => {
   const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
   html.setAttribute('data-theme', next);
   localStorage.setItem('portfolio-theme', next);
-  // NOTE: Three.js scene is intentionally unaffected by theme changes.
 });
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -80,14 +77,14 @@ themeToggle.addEventListener('click', () => {
   const canvas = document.getElementById('heroCanvas');
   if (!canvas) return;
 
-  // ── 3D PALETTE (Mapped from your :root CSS variables) ─────────────────
+  // ── 3D PALETTE ────────────────────────────────────────────────────────
   const COLORS = {
-    accent:     0x29aa9b, // --accent (#29aa9b)
-    accentGlow: 0x00ffe0, // --accent-mid / --glow base (#00ffe0)
-    bg:         0x080c12, // --bg (#080c12)
-    surface:    0x0e1420, // --bg-surface (#0e1420)
-    text:       0xe8edf5, // --text (#e8edf5)
-    textMuted:  0x6b7a99  // --text-muted (#6b7a99)
+    accent:     0x29aa9b,
+    accentGlow: 0x00ffe0,
+    bg:         0x080c12,
+    surface:    0x0e1420,
+    text:       0xe8edf5,
+    textMuted:  0x6b7a99
   };
 
   const scene  = new THREE.Scene();
@@ -111,9 +108,8 @@ themeToggle.addEventListener('click', () => {
   // ── 1A. FRONT ID BADGE TEXTURE ────────────────────────────────────────
   // >>> ID PHOTO <<<
   const idImageUrl = './pictures/idpic.png';
-  const fullBleedPhoto = false; //'true' if your image is already a full ID card
+  const fullBleedPhoto = false;
 
-  // >>> REPLACE THIS PATH WITH YOUR QR CODE IMAGE FILE <<<
   const qrImageUrl = './pictures/qr-themed.png';
 
   const frontCanvas = document.createElement('canvas');
@@ -130,7 +126,7 @@ themeToggle.addEventListener('click', () => {
       return;
     }
 
-    // Clean Base Card Surface (--bg-surface: #0e1420) - Header line removed
+    // Base Card Surface
     fCtx.fillStyle = '#0e1420';
     fCtx.fillRect(0, 0, 512, 800);
 
@@ -143,7 +139,7 @@ themeToggle.addEventListener('click', () => {
     fCtx.lineWidth = 2;
     fCtx.stroke();
 
-    // Outer Border (--border)
+    // Outer Border
     fCtx.strokeStyle = 'rgba(0, 255, 224, 0.18)';
     fCtx.lineWidth = 6;
     fCtx.strokeRect(18, 18, 476, 764);
@@ -204,7 +200,7 @@ themeToggle.addEventListener('click', () => {
   backTexture.colorSpace = THREE.SRGBColorSpace;
 
   function drawBackCard(loadedQrImg = null) {
-    // Clean Deep Dark Base (--bg: #080c12)
+    // Deep Dark Base
     bCtx.fillStyle = '#080c12';
     bCtx.fillRect(0, 0, 512, 800);
 
@@ -222,7 +218,7 @@ themeToggle.addEventListener('click', () => {
     bCtx.lineWidth = 2;
     bCtx.stroke();
 
-    // QR Code Image Frame (Same style as Front ID Photo Frame)
+    // QR Code Image Frame
     const qrSize = 250;
     const qrX = (512 - qrSize) / 2;
     const qrY = 175;
@@ -268,7 +264,6 @@ themeToggle.addEventListener('click', () => {
     backTexture.needsUpdate = true;
   }
 
-  // Initialize both card textures and load images
   drawFrontCard();
   drawBackCard();
 
@@ -289,12 +284,11 @@ themeToggle.addEventListener('click', () => {
   const frontMat = new THREE.MeshStandardMaterial({ map: frontTexture, roughness: 0.25, metalness: 0.15 });
   const backMat = new THREE.MeshStandardMaterial({ map: backTexture, roughness: 0.25, metalness: 0.15 });
 
-  // Materials order: [Right, Left, Top, Bottom, Front, Back]
   const cardMesh = new THREE.Mesh(cardGeo, [sideMat, sideMat, sideMat, sideMat, frontMat, backMat]);
   cardMesh.position.y = -cardHeight / 2;
   idGroup.add(cardMesh);
 
-  // 3D Edge Highlight (--accent: #29aa9b)
+  // 3D Edge Highlight
   const borderEdges = new THREE.EdgesGeometry(cardGeo);
   const borderLines = new THREE.LineSegments(
     borderEdges,
@@ -302,7 +296,7 @@ themeToggle.addEventListener('click', () => {
   );
   cardMesh.add(borderLines);
 
-  // Metal Clasp at Top (--text-muted: #6b7a99)
+  // Metal Clasp
   const clipGeo = new THREE.BoxGeometry(0.32, 0.22, 0.08);
   const clipMat = new THREE.MeshStandardMaterial({ color: COLORS.textMuted, metalness: 0.9, roughness: 0.2 });
   const clipMesh = new THREE.Mesh(clipGeo, clipMat);
@@ -327,7 +321,7 @@ themeToggle.addEventListener('click', () => {
     });
   }
 
-  // Lanyard Ribbon (--bg-surface: #0e1420)
+  // Lanyard Ribbon
   const strapWidth = 0.14;
   const strapGeo = new THREE.PlaneGeometry(strapWidth, 1, 1, numNodes - 1);
   const strapMat = new THREE.MeshStandardMaterial({
@@ -339,7 +333,7 @@ themeToggle.addEventListener('click', () => {
   const strapMesh = new THREE.Mesh(strapGeo, strapMat);
   scene.add(strapMesh);
 
-  // Glowing Center Stitch along Lanyard (--accent: #29aa9b)
+  // Center Stitch
   const stitchCurve = new THREE.CatmullRomCurve3(nodes.map(n => n.pos.clone()));
   const stitchGeo = new THREE.TubeGeometry(stitchCurve, 32, 0.012, 6, false);
   const stitchMat = new THREE.MeshBasicMaterial({ color: COLORS.accent, transparent: true, opacity: 0.8 });
@@ -357,7 +351,7 @@ themeToggle.addEventListener('click', () => {
   let isDragging = false;
   let isHovered = false;
   let downTime = 0;
-  let flipOffset = 0; // Tracks 180-degree (Math.PI) flips!
+  let flipOffset = 0;
 
   function updatePointer(e) {
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
@@ -425,13 +419,10 @@ themeToggle.addEventListener('click', () => {
       const endNode = nodes[numNodes - 1];
       const vx = endNode.pos.x - endNode.oldPos.x;
 
-      // 1. Quick click/tap -> Flip 180 degrees to show/hide QR backside!
       if (elapsed < 260 && moveDist < 0.06) {
         flipOffset += Math.PI;
-        // Give it a tiny physical nudge when flipped
         endNode.oldPos.z += 0.08;
       }
-      // 2. Fast horizontal release -> Spin 360 degrees with momentum!
       else if (Math.abs(vx) > 0.07) {
         const spins = Math.sign(vx) * Math.PI * 2;
         flipOffset += spins;
@@ -526,7 +517,6 @@ themeToggle.addEventListener('click', () => {
     cardRotZ += (targetRotZ - cardRotZ) * 0.15;
     idGroup.rotation.z = cardRotZ;
 
-    // Combine flipOffset (0 or PI) with drag tilt and natural idle sway
     const vx = endNode.pos.x - endNode.oldPos.x;
     const swayY = isDragging ? pointer.x * 0.45 : vx * 4.5 + Math.sin(Date.now() * 0.0015) * 0.12;
     const targetRotY = flipOffset + swayY;
@@ -601,7 +591,6 @@ const formSuccess = document.getElementById('formSuccess');
 const sendBtn     = contactForm?.querySelector('.btn-send');
 const btnText     = sendBtn?.querySelector('.btn-text');
 
-// Replace this with your actual Formspree endpoint URL
 const FORMSPREE_URL = "https://formspree.io/f/mvkzenqk"; 
 
 if (contactForm) {
@@ -620,14 +609,11 @@ if (contactForm) {
     
     if (!valid) return;
     
-    // UI Update: Sending State
     if (btnText) btnText.textContent = 'Sending…';
     sendBtn.disabled = true;
 
-    // Collect form data
     const formData = new FormData(contactForm);
 
-    // Send data to Formspree
     fetch(FORMSPREE_URL, {
       method: 'POST',
       body: formData,
@@ -637,7 +623,6 @@ if (contactForm) {
     })
     .then(response => {
       if (response.ok) {
-        // Success UI Update
         contactForm.reset();
         if (btnText) btnText.textContent = 'Sent ✓';
         formSuccess.classList.add('visible');
@@ -648,7 +633,6 @@ if (contactForm) {
           formSuccess.classList.remove('visible');
         }, 3500);
       } else {
-        // Formspree Error Handling (e.g., didn't verify email yet)
         response.json().then(data => {
           if (Object.hasOwn(data, 'errors')) {
             alert(data["errors"].map(error => error["message"]).join(", "));
@@ -661,7 +645,6 @@ if (contactForm) {
       }
     })
     .catch(error => {
-      // Network Error Handling
       alert("Oops! There was a problem submitting your form");
       if (btnText) btnText.textContent = 'Error';
       sendBtn.disabled = false;
@@ -687,7 +670,6 @@ new IntersectionObserver((entries) => {
     }
   });
 }, { threshold: 0.5 }).observe = function(el) {
-  // manually observe each section
 };
 sections.forEach(s => {
   new IntersectionObserver((entries) => {
@@ -721,7 +703,6 @@ sections.forEach(s => {
       return;
     }
 
-    // Prevent double-binding if script is initialized twice
     if (chatTrigger.dataset.bound === 'true') return;
     chatTrigger.dataset.bound = 'true';
 
@@ -747,7 +728,7 @@ sections.forEach(s => {
           `• **Computer Vision & OCR:** Experienced with **YOLOv8, TensorFlow Lite, OpenCV, and PyTesseract** for automated document data extraction.`;
       }
 
-      // 3. Virtual Assistant, Customer Support & Work Experience
+      // 3. Work Experience
       if (/\bva\b|virtual assistant|support|customer|csr|admin|executive|experience|work|job|intern|teams|notion/.test(q)) {
         return `I combine formal **multi-channel Customer Support experience** with technical Virtual Assistant & engineering skills:\n\n` +
           `• **Customer Support Representative (Pasay, Metro Manila — 2024):** Managed high-volume inbound/outbound inquiries across **phone, live chat, and email**. Handled team coordination, shift handovers, and escalations via **Microsoft Teams** with a focus on empathy and rapid resolution.\n` +
@@ -755,7 +736,7 @@ sections.forEach(s => {
           `• **Workspace Organization:** Advanced setup & database management in **Notion, Google Workspace, and MS Office**.`;
       }
 
-      // 4. Workstation Specs & Typing Speed
+      // 4. Workstation Specs
       if (/spec|workstation|laptop|pc|computer|ram|ryzen|nvidia|gtx|typing|wpm|setup|hardware spec/.test(q)) {
         return `Here are my workstation and typing specifications:\n\n` +
           `• **Processor:** AMD Ryzen 5 4600H\n` +
@@ -765,7 +746,7 @@ sections.forEach(s => {
           `• **Typing Speed:** **41 WPM with 98% accuracy**`;
       }
 
-      // 5. Tech Stack, Programming, CAD & Hardware Repair
+      // 5. Tech Stack & Hardware Repair
       if (/stack|skill|tech|language|code|program|coding|python|php|flutter|cad|design|repair|fpga|arduino|iot/.test(q)) {
         return `My technical stack covers software, automation, 3D design, and hardware:\n\n` +
           `• **AI & Automation:** Zapier, Make, Gemini API, Notion, OCR Data Extraction.\n` +
@@ -774,7 +755,7 @@ sections.forEach(s => {
           `• **Hardware, IoT & Repair:** Raspberry Pi 4, Tang Nano 9K FPGA (Verilog/VHDL), Arduino, plus hands-on diagnostics & component repair for **laptops, TVs, and smart robot vacuums**.`;
       }
 
-      // 6. Education, Mapúa & Coursera Certifications
+      // 6. Education & Certifications
       if (/educat|school|college|university|mapua|mapúa|degree|architect|student|certif|coursera|graduate/.test(q)) {
         return `Here is my educational background and certification list:\n\n` +
           `• **BS Computer Engineering — Mapúa University** (2024–Present | Expected Grad: **Jan 2028**): Focus on Database Management, Agile/SDLC, Networking, and Microcontrollers.\n` +
@@ -783,7 +764,7 @@ sections.forEach(s => {
           `• **Verified Coursera Certifications:** *FPGA Design with HDL (CU Boulder)*, *Intro to AI (IBM)*, *Data Analysis with R (IBM)*, *Linear Circuits (Georgia Tech)*, *Vector Calculus (Johns Hopkins)*, *Inferential Statistics (Duke)*, and *Mechanics of Materials I–III (Georgia Tech/Rice)*.`;
       }
 
-      // 7. Hiring, Availability, Contact & Location
+      // 7. Contact & Location
       if (/hire|hiring|available|availability|contact|reach|email|location|where|rate|resume|cv/.test(q)) {
         return `Yes! I am **available for hire** and based in **Imus City, Cavite, Philippines**.\n\n` +
           `I am looking for opportunities as a:\n` +
@@ -793,7 +774,7 @@ sections.forEach(s => {
           `You can reach me directly using the **Get in Touch / Contact** section on this page!`;
       }
 
-      // 8. Greeting / Introduction
+      // 8. Greeting
       if (/^(hi|hello|hey|good|who are you|about you|introduce|marisa)/.test(q)) {
         return `Hi! 👋 I'm **Marisa Jonnel P. Camunggol**, a Computer Engineering student at **Mapúa University** and former Architecture major from Cavite, Philippines.\n\n` +
           `I combine formal **multi-channel Customer Support experience** with **AI workflow automation (Zapier, Make, Gemini API), Notion organization, full-stack web dev, 2D/3D CAD, and electronics repair**.\n\n` +
@@ -919,7 +900,6 @@ sections.forEach(s => {
     }
   }
 
-  // Ensures elements exist whether script is in <head> or at bottom of <body>
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', setupChat);
   } else {
@@ -929,7 +909,6 @@ sections.forEach(s => {
 
 
 // ─── Image data for tech stack banner ──────────────────────────────────
-  // Using picsum.photos for beautiful placeholder images
   const images1 = [
     { src: 'techstack/python.png'},
     { src: 'techstack/c.png'},
@@ -946,7 +925,6 @@ sections.forEach(s => {
   }
 
   function buildTrack(trackEl, items) {
-    // Duplicate items for seamless loop
     const html = [...items, ...items].map((img, i) => makeCard(img, i)).join('');
     trackEl.innerHTML = html;
   }
@@ -961,7 +939,6 @@ sections.forEach(s => {
 function scrollCertificates(direction) {
   const track = document.getElementById('certTrack');
   
-  // Width of a card (250px) + the gap (20px) = 270px
   const scrollAmount = 270; 
   
   track.scrollBy({ 
@@ -976,12 +953,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (viewMoreBtn && projectsGrid) {
         viewMoreBtn.addEventListener('click', (e) => {
-            e.preventDefault(); // Prevents the page from jumping to the top when clicking the link
-            
-            // Toggle the 'show-all' class on the grid container
+            e.preventDefault();
             projectsGrid.classList.toggle('show-all');
             
-            // Change the button text based on the grid's state
             if (projectsGrid.classList.contains('show-all')) {
                 viewMoreBtn.textContent = 'View less';
             } else {

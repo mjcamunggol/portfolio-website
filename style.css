@@ -64,10 +64,9 @@ body {
   color: var(--text);
   overflow-x: hidden;
   transition: background var(--t-base), color var(--t-base);
-  cursor: none; /* custom cursor active */
+  cursor: none;
 }
 
-/* Remove cursor:none on touch devices */
 @media (pointer: coarse) { body { cursor: auto; } }
 
 ::selection { background: var(--accent-dim); color: var(--accent); }
@@ -147,7 +146,6 @@ body.cursor-hover .cursor-follower {
   gap: 2.5rem;
 }
 
-/* Animated underline nav links */
 .nav-link {
   font-family: var(--font-mono);
   font-size: 0.8rem;
@@ -256,7 +254,6 @@ body.cursor-hover .cursor-follower {
   -webkit-user-select: none;
 }
 
-/* Three.js Canvas fills hero behind content */
 #heroCanvas {
   position: absolute;
   inset: 0;
@@ -308,7 +305,7 @@ body.cursor-hover .cursor-follower {
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
-  pointer-events: auto; /* Re-enables clicking on your CTA buttons */
+  pointer-events: auto;
 }
 
 .hero-cta a,
@@ -329,7 +326,7 @@ body.cursor-hover .cursor-follower {
   gap: 0.5rem;
   z-index: 2;
   opacity: 0.5;
-  pointer-events: none; /* Prevents scroll indicator from blocking ID swings */
+  pointer-events: none;
 }
 
 .scroll-line {
@@ -353,7 +350,6 @@ body.cursor-hover .cursor-follower {
   50% { transform: scaleY(0.6); opacity: 1; }
 }
 
-/* Responsive tweak so the text and 3D ID don't clash on smaller screens */
 @media (max-width: 768px) {
   .hero {
     align-items: flex-end;
@@ -560,7 +556,6 @@ body.cursor-hover .cursor-follower {
 /* ─── Projects ───────────────────────────────────────────────────────────── */
 .projects { background: var(--bg-surface); }
 
-/* Hide all projects from the 5th one onwards by default */
 #projectsGrid:not(.show-all) .project-card:nth-child(n+5) {
     display: none;
 }
@@ -1476,6 +1471,52 @@ body.cursor-hover .cursor-follower {
   .donate-card { padding: 1.5rem; }
   .preset-amounts { gap: 0.5rem; }
   .amount-btn { padding: 0.6rem 1rem; font-size: 0.82rem; }
+
+  /* ── Hero Mobile Layout ── */
+  .hero {
+    align-items: stretch;
+  }
+
+  .hero-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding-top: 5.5rem;
+    padding-bottom: 5rem;
+    box-sizing: border-box;
+    pointer-events: none;
+  }
+
+  .hero-tag,
+  .hero-title,
+  .hero-sub,
+  .hero-cta {
+    pointer-events: auto;
+  }
+
+  .hero-tag {
+    font-size: 0.75rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .hero-title {
+    font-size: clamp(1.9rem, 9vw, 2.5rem);
+    line-height: 1.05;
+    margin-bottom: 0;
+  }
+
+  .hero-sub {
+    margin-top: auto;
+    margin-bottom: 1rem;
+    font-size: 0.8rem;
+    line-height: 1.4;
+  }
+
+  .hide-mobile {
+    display: none;
+  }
 }
 
 /* .hidden utility */
@@ -1553,8 +1594,8 @@ body.cursor-hover .cursor-follower {
   display: flex;
   overflow-x: auto;
   scroll-behavior: smooth;
-  gap: 1.5rem; /* Matched to projects gap */
-  padding: 2rem 1rem; /* Added padding to prevent hover shadows from clipping */
+  gap: 1.5rem;
+  padding: 2rem 1rem;
   
   /* Hide scrollbars */
   -ms-overflow-style: none;
@@ -1565,7 +1606,7 @@ body.cursor-hover .cursor-follower {
   display: none;
 }
 
-/* Base Card (Matches .project-card) */
+/* Base Card */
 .cert-card {
   flex: 0 0 auto;
   width: 260px;
@@ -1581,7 +1622,7 @@ body.cursor-hover .cursor-follower {
   transform: translateY(-6px);
 }
 
-/* Inner Card Layer (Matches .card-inner) */
+/* Inner Card Layer */
 .cert-inner {
   padding: 1.25rem;
   height: 100%;
@@ -1601,7 +1642,7 @@ body.cursor-hover .cursor-follower {
   border-color: var(--accent-mid);
 }
 
-/* Glow layer (Matches .card-glow) */
+/* Glow layer */
 .cert-glow {
   position: absolute;
   inset: 0;
@@ -1620,17 +1661,17 @@ body.cursor-hover .cursor-follower {
 /* Content Styling */
 .cert-card img {
   width: 100%;
-  height: 170px; /* You can adjust this height to your liking */
-  object-fit: contain; /* This prevents squishing and ensures the whole cert is visible */
-  border-radius: 4px; /* Reduced slightly so the inner border looks natural */
+  height: 170px;
+  object-fit: contain;
+  border-radius: 4px;
   margin-bottom: 1.25rem;
-  background-color: #ffffff; /* Adds a solid background in case the image doesn't fill the whole box */
+  background-color: #ffffff;
   border: 1px solid var(--accent-dim);
-  padding: 5px; /* Optional: adds a nice little frame effect inside the border */
+  padding: 5px;
 }
 
 .cert-card h3 {
-  font-size: 1.1rem; /* Slightly smaller than project titles to fit width */
+  font-size: 1.1rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
   letter-spacing: -0.01em;
@@ -1638,14 +1679,14 @@ body.cursor-hover .cursor-follower {
 }
 
 .cert-card p {
-  font-family: var(--font-mono); /* Using your mono font for the subtitle/file */
+  font-family: var(--font-mono);
   font-size: 0.75rem;
   color: var(--text-muted);
   line-height: 1.5;
   margin: 0;
 }
 
-/* Navigation Arrows (Themed to your variables) */
+/* Navigation Arrows */
 .slider-btn {
   background-color: var(--bg-surface);
   color: var(--accent);
