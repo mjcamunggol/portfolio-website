@@ -178,7 +178,7 @@ themeToggle.addEventListener('click', () => {
 
     fCtx.fillStyle = '#6b7a99';
     fCtx.font = '16px monospace';
-    fCtx.fillText('AI · AUTOMATION · WEB · HARDWARE', 256, 600);
+    fCtx.fillText('AI · AUTOMATION · WEB · EMBEDDED', 256, 600);
 
     // Hint to click/flip
     fCtx.fillStyle = 'rgba(0, 255, 224, 0.45)';
@@ -594,17 +594,22 @@ window.addEventListener('scroll', () => {
 }, { passive: true });
 
 /* ══════════════════════════════════════════════════════════════════════════
-   8. CONTACT FORM
+   /* 8. CONTACT FORM
 ══════════════════════════════════════════════════════════════════════════ */
 const contactForm = document.getElementById('contactForm');
 const formSuccess = document.getElementById('formSuccess');
 const sendBtn     = contactForm?.querySelector('.btn-send');
 const btnText     = sendBtn?.querySelector('.btn-text');
 
+// Replace this with your actual Formspree endpoint URL
+const FORMSPREE_URL = "https://formspree.io/f/mvkzenqk"; 
+
 if (contactForm) {
   contactForm.addEventListener('submit', (e) => {
     e.preventDefault();
     let valid = true;
+    
+    // Validation
     contactForm.querySelectorAll('input, textarea').forEach(input => {
       if (!input.value.trim()) {
         input.style.borderColor = '#ff4466';
@@ -612,45 +617,57 @@ if (contactForm) {
         input.addEventListener('focus', () => { input.style.borderColor = ''; }, { once: true });
       }
     });
+    
     if (!valid) return;
+    
+    // UI Update: Sending State
     if (btnText) btnText.textContent = 'Sending…';
     sendBtn.disabled = true;
-    setTimeout(() => {
-      contactForm.reset();
-      if (btnText) btnText.textContent = 'Sent ✓';
-      formSuccess.classList.add('visible');
-      setTimeout(() => {
-        if (btnText) btnText.textContent = 'Send Message';
+
+    // Collect form data
+    const formData = new FormData(contactForm);
+
+    // Send data to Formspree
+    fetch(FORMSPREE_URL, {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'Accept': 'application/json'
+      }
+    })
+    .then(response => {
+      if (response.ok) {
+        // Success UI Update
+        contactForm.reset();
+        if (btnText) btnText.textContent = 'Sent ✓';
+        formSuccess.classList.add('visible');
+        
+        setTimeout(() => {
+          if (btnText) btnText.textContent = 'Send Message';
+          sendBtn.disabled = false;
+          formSuccess.classList.remove('visible');
+        }, 3500);
+      } else {
+        // Formspree Error Handling (e.g., didn't verify email yet)
+        response.json().then(data => {
+          if (Object.hasOwn(data, 'errors')) {
+            alert(data["errors"].map(error => error["message"]).join(", "));
+          } else {
+            alert("Oops! There was a problem submitting your form");
+          }
+        });
+        if (btnText) btnText.textContent = 'Error';
         sendBtn.disabled = false;
-        formSuccess.classList.remove('visible');
-      }, 3500);
-    }, 1400);
+      }
+    })
+    .catch(error => {
+      // Network Error Handling
+      alert("Oops! There was a problem submitting your form");
+      if (btnText) btnText.textContent = 'Error';
+      sendBtn.disabled = false;
+    });
   });
 }
-
-/* Card ripple */
-document.querySelectorAll('.project-card').forEach(card => {
-  card.addEventListener('click', (e) => {
-    const ripple = document.createElement('span');
-    const rect   = card.getBoundingClientRect();
-    const size   = Math.max(rect.width, rect.height);
-    Object.assign(ripple.style, {
-      position: 'absolute', borderRadius: '50%', pointerEvents: 'none', zIndex: '0',
-      width: `${size}px`, height: `${size}px`,
-      left: `${e.clientX - rect.left - size / 2}px`,
-      top:  `${e.clientY - rect.top  - size / 2}px`,
-      background: 'rgba(0,255,224,0.08)',
-      transform: 'scale(0)',
-      animation: 'ripple 0.55s ease-out forwards',
-    });
-    card.appendChild(ripple);
-    ripple.addEventListener('animationend', () => ripple.remove());
-  });
-});
-
-const rippleStyle  = document.createElement('style');
-rippleStyle.textContent = '@keyframes ripple { to { transform: scale(2.2); opacity: 0; } }';
-document.head.appendChild(rippleStyle);
 
 /* ══════════════════════════════════════════════════════════════════════════
    9. FOOTER YEAR & ACTIVE NAV
@@ -940,3 +957,36 @@ sections.forEach(s => {
   function setSpeed(seconds) {
     document.documentElement.style.setProperty('--speed', 30 + 's');
   }
+
+function scrollCertificates(direction) {
+  const track = document.getElementById('certTrack');
+  
+  // Width of a card (250px) + the gap (20px) = 270px
+  const scrollAmount = 270; 
+  
+  track.scrollBy({ 
+    left: direction * scrollAmount, 
+    behavior: 'smooth' 
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const viewMoreBtn = document.getElementById('viewMoreBtn');
+    const projectsGrid = document.getElementById('projectsGrid');
+
+    if (viewMoreBtn && projectsGrid) {
+        viewMoreBtn.addEventListener('click', (e) => {
+            e.preventDefault(); // Prevents the page from jumping to the top when clicking the link
+            
+            // Toggle the 'show-all' class on the grid container
+            projectsGrid.classList.toggle('show-all');
+            
+            // Change the button text based on the grid's state
+            if (projectsGrid.classList.contains('show-all')) {
+                viewMoreBtn.textContent = 'View less';
+            } else {
+                viewMoreBtn.textContent = 'View more';
+            }
+        });
+    }
+});

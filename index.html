@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Marisa — AI & Web Developer</title>
+  <title>Marisa — System Architect</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="icon" type="image/png" href="./pictures/MC.png">
 </head>
 <body>
   <div class="cursor" id="cursor"></div>
@@ -23,8 +24,8 @@
       <a href="#contact"  class="nav-link">Contact</a>
     </nav>
     <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
-      <span class="toggle-icon sun">☀</span>
-      <span class="toggle-icon moon">☪</span>
+      <span class="toggle-icon sun">L</span>
+      <span class="toggle-icon moon">D</span>
     </button>
     <button class="hamburger" id="hamburger" aria-label="Menu">
       <span></span><span></span><span></span>
@@ -67,7 +68,7 @@
       <div class="about-grid">
         <div class="about-text">
           <h2 class="section-title reveal-item">Who I am<span class="dot accent">.</span></h2>
-          <p class="reveal-item delay-1">I'm a Computer Engineering student with a passion for AI, Web Development, and System Design. With a unique background in Architecture, I love building things that matter - from designing living spaces, repairing tech devices and to building efficient sysmtems for daily use.</p>
+          <p class="reveal-item delay-1">I'm a Computer Engineering student with a passion for AI, Web Development, and System Design. With a unique background in Architecture, I love building things that matter - from designing living spaces, repairing tech devices and to building efficient systems for daily use.</p>
           <p class="reveal-item delay-2">My work sits at the intersection of accessible technology and real-world impact. I believe architecture and engineering should serve people hand-in-hand.</p>
           <div class="about-stats reveal-item delay-3">
             <div class="stat"><span class="stat-num">10+</span><span class="stat-label">Key Projects</span></div>
@@ -155,14 +156,14 @@
     <div class="container">
       <div class="section-label reveal-item">03 — Work</div>
       <h2 class="section-title reveal-item">Done Projects<span class="dot accent">.</span></h2>
-      <div class="projects-grid">
+      <div class="projects-grid" id="projectsGrid">
+        <!-- 10 Project Articles go here (exactly as you provided them) -->
         <article class="project-card" tabindex="0">
           <div class="card-inner glass">
             <div class="card-header"><span class="card-num">01</span><div class="card-links"><a href="#" class="card-link">&#60;/&#62;</a><a href="#" class="card-link">↗</a></div></div>
             <h3 class="card-title">AI Filipino Sign Language Recognition</h3>
             <p class="card-desc">Real-time hand gesture recognition using computer vision and deep learning to bridge communication gaps for the Filipino deaf community.</p>
             <div class="card-tags"><span>Vision Transformer</span><span>Python</span><span>TensorFlow</span><span>OpenCV</span><span>MediaPipe</span></div>
-            <br><a href="" class="btn btn-primary">Read More</a>
           </div><div class="card-glow"></div>
         </article>
         
@@ -172,7 +173,6 @@
             <h3 class="card-title">Edge Hardware Defect Detection</h3>
             <p class="card-desc">A custom-trained, edge-optimized computer vision pipeline for real-time manufacturing defect detection using YOLOv8 and TensorFlow Lite.</p>
             <div class="card-tags"><span>Computer Vision</span><span>Edge AI</span><span>YOLOv8</span><span>Model Quantization</span><span>TensorFlow</span></div>
-            <br><a href="" class="btn btn-primary">Read More</a>
           </div><div class="card-glow"></div>
         </article>
         
@@ -182,7 +182,6 @@
             <h3 class="card-title">Student Violation Management System</h3>
             <p class="card-desc">Full-stack facility management system for tracking maintenance requests, work orders, and asset records across campus facilities.</p>
             <div class="card-tags"><span>Website Development</span><span>HTML/CSS</span><span>JS</span><span>MySQL</span></div>
-            <br><a href="" class="btn btn-primary">Read More</a>
           </div><div class="card-glow"></div>
         </article>
         
@@ -192,7 +191,6 @@
             <h3 class="card-title">FoodLink Donation Platform</h3>
             <p class="card-desc">Web platform connecting food donors with beneficiaries to reduce food waste and address hunger in local communities across the Philippines.</p>
             <div class="card-tags"><span>Flutter</span><span>PHP</span><span>MySQL</span><span>Bootstrap</span><span>jQuery</span></div>
-            <br><a href="" class="btn btn-primary">Read More</a>
           </div><div class="card-glow"></div>
         </article>
         
@@ -202,10 +200,8 @@
             <h3 class="card-title">Hexadecimal 7-Segment Decoder Design</h3>
             <p class="card-desc">Designed a custom 4-bit hexadecimal to 7-segment decoder using K-map optimized SOP equations, physically implemented with cascaded 7400-series logic gates and strict "Manhattan" breadboard routing.</p>
             <div class="card-tags"><span>Hardware Design</span><span>Circuit</span><span>Breadboard</span><span>Combinational Logic</span></div>
-            <br><a href="" class="btn btn-primary">Read More</a>
           </div><div class="card-glow"></div>
         </article>
-        
         
         <article class="project-card" tabindex="0">
           <div class="card-inner glass">
@@ -213,7 +209,6 @@
             <h3 class="card-title">Automated Document &amp; Serial Number OCR Scanner</h3>
             <p class="card-desc">An optical character recognition (OCR) pipeline that automatically extracts, reads, and logs serial numbers and text from physical notes to eliminate manual data entry errors.</p>
             <div class="card-tags"><span>Python</span><span>OpenCV</span><span>PyTesseract</span><span>Automation</span></div>
-            <br><a href="" class="btn btn-primary">Read More</a>
           </div><div class="card-glow"></div>
         </article>
         
@@ -223,7 +218,6 @@
             <h3 class="card-title">AI-Powered Automated Meeting Note-Taker</h3>
             <p class="card-desc">An automated productivity script that captures screen activity and audio simultaneously, leveraging the Gemini API to generate structured meeting summaries.</p>
             <div class="card-tags"><span>Python</span><span>Gemini API</span><span>Productivity</span><span>Workflow</span></div>
-            <br><a href="" class="btn btn-primary">Read More</a>
           </div><div class="card-glow"></div>
         </article>
 
@@ -233,7 +227,6 @@
             <h3 class="card-title">4-Bit ALU &amp; Digital Circuit Implementation</h3>
             <p class="card-desc">Designed, synthesized, and tested combinational and sequential digital circuits, including a 4-bit ALU, on a Tang Nano 9K FPGA development board.</p>
             <div class="card-tags"><span>Verilog</span><span>VHDL</span><span>FPGA</span><span>Digital Design</span></div>
-            <br><a href="" class="btn btn-primary">Read More</a>
           </div><div class="card-glow"></div>
         </article>
         
@@ -243,7 +236,6 @@
             <h3 class="card-title">Residential Renovation &amp; Space Planning</h3>
             <p class="card-desc">End-to-end project management and architectural design for a residential house renovation, utilizing 2D/3D CAD drafting and spatial visualization.</p>
             <div class="card-tags"><span>AutoCAD</span><span>SketchUp</span><span>Lumion</span><span>Project Management</span></div>
-            <br><a href="" class="btn btn-primary">Read More</a>
           </div><div class="card-glow"></div>
         </article>
         
@@ -253,19 +245,127 @@
             <h3 class="card-title">Consumer Electronics &amp; Appliance Repair</h3>
             <p class="card-desc">Hands-on hardware troubleshooting, disassembly, component replacement, and repair for laptops, smart TVs, and robotic vacuum cleaners.</p>
             <div class="card-tags"><span>Hardware Repair</span><span>Diagnostics</span><span>Electronics</span><span>Troubleshooting</span></div>
-            <br><a href="" class="btn btn-primary">Read More</a>
           </div><div class="card-glow"></div>
         </article>
-
       </div>
-      <a class="btn btn-ghost" style="margin-top:5%;">View more</a>
+      
+      <!-- Updated Anchor tag with an ID -->
+      <a href="#" id="viewMoreBtn" class="btn btn-ghost" style="margin-top:5%;">View more</a>
     </div>
-  </section>
+</section>
 
   <section class="section certifications" id="certifications">
     <div class="container">
       <div class="section-label reveal-item">04 — Verify</div>
       <h2 class="section-title reveal-item">Certifications<span class="dot accent">.</span></h2>
+      <div class="certificate-slider-wrapper">
+  <!-- Left Navigation Arrow -->
+  <button class="slider-btn left-btn" onclick="scrollCertificates(-1)">&#10094;</button>
+  
+  <!-- Horizontal Scrolling Track -->
+  <div class="certificate-track" id="certTrack">
+    
+    <!-- Certificate 1 -->
+    <div class="cert-card">
+      <div class="cert-glow"></div>
+      <div class="cert-inner">
+        <a href="certificate/hardware description languages for fpga.pdf" target="_blank">
+          <img src="certificate/_MConverter.eu_hardware description languages for fpga.png" alt="Hardware Description Languages for FPGA Design">
+        </a>
+        <h3>Hardware Description Languages for FPGA Design</h3>
+        <p>University of Colorado Boulder</p>
+      </div>
+    </div>
+
+    <!-- Certificate 2 -->
+    <div class="cert-card">
+      <div class="cert-glow"></div>
+      <div class="cert-inner">
+        <a href="certificate/diode-pn Juntion and Metal Semiconductor Contact.pdf" target="_blank">
+          <img src="certificate/_MConverter.eu_diode-pn Juntion and Metal Semiconductor Contact.png" alt="Diode - pn Junction and Metal Semiconductor Contact">
+        </a>
+        <h3>Diode - pn Junction and Metal Semiconductor Contact</h3>
+        <p>University of Colorado Boulder</p>
+      </div>
+    </div>
+
+    <!-- Certificate 3 -->
+    <div class="cert-card">
+      <div class="cert-glow"></div>
+      <div class="cert-inner">
+        <a href="certificate/intro_to_AI.pdf" target="_blank">
+          <img src="certificate/_MConverter.eu_intro_to_AI.png" alt="Introduction to Artificial Intelligence (AI)">
+        </a>
+        <h3>Introduction to Artificial Intelligence (AI)</h3>
+        <p>IBM</p>
+      </div>
+    </div>
+    
+    <!-- Certificate 4 -->
+    <div class="cert-card">
+      <div class="cert-glow"></div>
+      <div class="cert-inner">
+        <a href="certificate/linear circuits.pdf" target="_blank">
+          <img src="certificate/_MConverter.eu_linear circuits.png" alt="Linear Circuits 1: DC Analysis">
+        </a>
+        <h3>Linear Circuits 1: DC Analysis</h3>
+        <p>Georgia Institute of Technology</p>
+      </div>
+    </div>
+
+    <!-- Certificate 5 -->
+    <div class="cert-card">
+      <div class="cert-glow"></div>
+      <div class="cert-inner">
+        <a href="certificate/differential equations.pdf" target="_blank">
+          <img src="certificate/_MConverter.eu_differential equations.png" alt="Differential Equations Part I Basic Theory">
+        </a>
+        <h3>Differential Equations Part I Basic Theory</h3>
+        <p>Korea Advanced Institute of Science and Technology(KAIST)</p>
+      </div>
+    </div>
+
+    <!-- Certificate 6 -->
+    <div class="cert-card">
+      <div class="cert-glow"></div>
+      <div class="cert-inner">
+        <a href="certificate/calculus through data and modeling.pdf" target="_blank">
+          <img src="certificate/_MConverter.eu_calculus through data and modeling.png" alt="Calculus through Data & Modelling: Vector Calculus">
+        </a>
+        <h3>Calculus through Data & Modelling: Vector Calculus</h3>
+        <p>Johns Hopkins University</p>
+      </div>
+    </div>
+
+    <!-- Certificate 7 -->
+    <div class="cert-card">
+      <div class="cert-glow"></div>
+      <div class="cert-inner">
+        <a href="certificate/matrix algebra.pdf" target="_blank">
+          <img src="certificate/_MConverter.eu_matrix algebra.png" alt="Matrix Algebra for Engineers">
+        </a>
+        <h3>Matrix Algebra for Engineers</h3>
+        <p>The Hong Kong University of Science and Technology</p>
+      </div>
+    </div>
+
+    <!-- Certificate 8 -->
+    <div class="cert-card">
+      <div class="cert-glow"></div>
+      <div class="cert-inner">
+        <a href="certificate/inferential statistics.pdf" target="_blank">
+          <img src="certificate/_MConverter.eu_inferential statistics.png" alt="Inferential Statistics">
+        </a>
+        <h3>Inferential Statistics</h3>
+        <p>Duke University</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Right Navigation Arrow -->
+  <button class="slider-btn right-btn" onclick="scrollCertificates(1)">&#10095;</button>
+</div>
   </section>
 
   <section class="section contact" id="contact">
@@ -303,10 +403,9 @@
         <div class="form-success" id="formSuccess">Message sent! I'll be in touch soon.</div>
       </form>
       <div class="social-links reveal-item delay-3">
-        <a href="#" class="social-link">GitHub</a>
+        <a href="https://github.com/mjcamunggol" class="social-link">GitHub</a>
         <a href="#" class="social-link">LinkedIn</a>
-        <a href="#" class="social-link">Viber</a>
-        <a href="#" class="social-link">Discord</a>
+        <a href="viber://chat?number=639204934921" class="social-link">Viber</a>
       </div>
     </div>
   </section>
