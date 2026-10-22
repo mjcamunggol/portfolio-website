@@ -252,6 +252,8 @@ body.cursor-hover .cursor-follower {
   display: flex;
   align-items: center;
   overflow: hidden;
+  user-select: none; /* Prevents accidental text highlighting while dragging the ID */
+  -webkit-user-select: none;
 }
 
 /* Three.js Canvas fills hero behind content */
@@ -261,6 +263,9 @@ body.cursor-hover .cursor-follower {
   width: 100% !important;
   height: 100% !important;
   display: block;
+  z-index: 1;
+  pointer-events: auto; /* Captures mouse & touch drags */
+  touch-action: pan-y;  /* Allows vertical page scroll unless grabbing the 3D card */
 }
 
 .hero-content {
@@ -269,6 +274,7 @@ body.cursor-hover .cursor-follower {
   max-width: 680px;
   padding: 0 clamp(1.2rem, 5vw, 3rem);
   margin-left: clamp(1.2rem, 8vw, 8rem);
+  pointer-events: none; /* Lets mouse drags pass through empty space around text */
 }
 
 .hero-tag {
@@ -298,7 +304,18 @@ body.cursor-hover .cursor-follower {
   max-width: 480px;
 }
 
-.hero-cta { display: flex; gap: 1rem; flex-wrap: wrap; }
+.hero-cta {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  pointer-events: auto; /* Re-enables clicking on your CTA buttons */
+}
+
+.hero-cta a,
+.hero-cta .btn {
+  pointer-events: auto;
+  cursor: pointer;
+}
 
 /* Scroll indicator */
 .scroll-hint {
@@ -312,6 +329,7 @@ body.cursor-hover .cursor-follower {
   gap: 0.5rem;
   z-index: 2;
   opacity: 0.5;
+  pointer-events: none; /* Prevents scroll indicator from blocking ID swings */
 }
 
 .scroll-line {
@@ -333,6 +351,17 @@ body.cursor-hover .cursor-follower {
 @keyframes scrollPulse {
   0%, 100% { transform: scaleY(1); opacity: 0.5; }
   50% { transform: scaleY(0.6); opacity: 1; }
+}
+
+/* Responsive tweak so the text and 3D ID don't clash on smaller screens */
+@media (max-width: 768px) {
+  .hero {
+    align-items: flex-end;
+    padding-bottom: 6.5rem;
+  }
+  .hero-content {
+    margin-left: 0;
+  }
 }
 
 /* ─── Buttons ────────────────────────────────────────────────────────────── */

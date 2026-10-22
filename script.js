@@ -97,89 +97,474 @@ themeToggle.addEventListener('click', () => {
 ══════════════════════════════════════════════════════════════════════════ */
 (function initThreeScene() {
   const canvas = document.getElementById('heroCanvas');
+  if (!canvas) return;
 
-  const scene    = new THREE.Scene();
-  const camera   = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 100);
-  camera.position.set(0, 0, 5);
+  // ── 3D PALETTE (Mapped from your :root CSS variables) ─────────────────
+  const COLORS = {
+    accent:     0x29aa9b, // --accent (#29aa9b)
+    accentGlow: 0x00ffe0, // --accent-mid / --glow base (#00ffe0)
+    bg:         0x080c12, // --bg (#080c12)
+    surface:    0x0e1420, // --bg-surface (#0e1420)
+    text:       0xe8edf5, // --text (#e8edf5)
+    textMuted:  0x6b7a99  // --text-muted (#6b7a99)
+  };
+
+  const scene  = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+  camera.position.set(0, 0, 7);
 
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setSize(window.innerWidth, window.innerHeight);
 
-  // Lights
-  scene.add(new THREE.AmbientLight(0xffffff, 0.4));
-  const dirLight = new THREE.DirectionalLight(0x00ffe0, 2.2);
+  // ── LIGHTS ────────────────────────────────────────────────────────────
+  scene.add(new THREE.AmbientLight(COLORS.text, 0.65));
+  const dirLight = new THREE.DirectionalLight(COLORS.accent, 2.5);
   dirLight.position.set(4, 6, 4);
   scene.add(dirLight);
-  const rimLight = new THREE.DirectionalLight(0x4466ff, 0.8);
+
+  const rimLight = new THREE.DirectionalLight(COLORS.textMuted, 1.4);
   rimLight.position.set(-4, -2, -3);
   scene.add(rimLight);
 
-  // ── PLACEHOLDER CUBE ──────────────────────────────────────────────────
-  // Replace this block with GLTFLoader to load your custom .glb model
-  // See commented GLTF block below.
-  const cubeGeo   = new THREE.BoxGeometry(1.6, 1.6, 1.6);
-  const cubeSolid = new THREE.Mesh(cubeGeo, new THREE.MeshStandardMaterial({ color: 0x0e1420, roughness: 0.25, metalness: 0.85, transparent: true, opacity: 0.92 }));
-  const cubeWire  = new THREE.Mesh(cubeGeo, new THREE.MeshBasicMaterial({ color: 0x00ffe0, wireframe: true, transparent: true, opacity: 0.18 }));
-  const cubeGroup = new THREE.Group();
-  cubeGroup.add(cubeSolid, cubeWire);
-  cubeGroup.position.set(2.2, 0, 0);
-  scene.add(cubeGroup);
+  // ── 1A. FRONT ID BADGE TEXTURE ────────────────────────────────────────
+  // >>> REPLACE THIS PATH WITH YOUR ID PHOTO <<<
+  const idImageUrl = 'your-id-picture.jpg';
+  const fullBleedPhoto = false; // Set to 'true' if your image is already a full ID card
 
-  /*
-  // ── GLTF MODEL (uncomment to activate) ──────────────────────────────
-  // Add to HTML: <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/examples/js/loaders/GLTFLoader.js"></script>
-  const gltfLoader = new THREE.GLTFLoader();
-  gltfLoader.load('./model.glb', (gltf) => {
-    const model = gltf.scene;
-    model.scale.set(1, 1, 1);
-    model.position.set(2.2, 0, 0);
-    scene.add(model);
-  }, undefined, console.error);
-  */
+  // >>> OPTIONAL: REPLACE WITH YOUR OWN QR CODE IMAGE URL <<<
 
-  // Particles
-  const pGeo  = new THREE.BufferGeometry();
-  const pPos  = new Float32Array(80 * 3).map(() => (Math.random() - 0.5) * 20);
-  pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
-  const particles = new THREE.Points(pGeo, new THREE.PointsMaterial({ color: 0x00ffe0, size: 0.04, transparent: true, opacity: 0.35 }));
-  scene.add(particles);
+  // >>> REPLACE THIS PATH WITH YOUR QR CODE IMAGE FILE <<<
+  const qrImageUrl = 'your-qr-picture.jpg';
 
-  // Mouse parallax
-  let tRX = 0, tRY = 0, cRX = 0, cRY = 0;
-  window.addEventListener('mousemove', (e) => {
-    tRY = ((e.clientX / window.innerWidth)  - 0.5) * 0.6;
-    tRX = ((e.clientY / window.innerHeight) - 0.5) * 0.4;
+  const frontCanvas = document.createElement('canvas');
+  frontCanvas.width = 512;
+  frontCanvas.height = 800;
+  const fCtx = frontCanvas.getContext('2d');
+  const frontTexture = new THREE.CanvasTexture(frontCanvas);
+  frontTexture.colorSpace = THREE.SRGBColorSpace;
+
+  function drawFrontCard(loadedImg = null) {
+    if (loadedImg && fullBleedPhoto) {
+      fCtx.drawImage(loadedImg, 0, 0, 512, 800);
+      frontTexture.needsUpdate = true;
+      return;
+    }
+
+    // Clean Base Card Surface (--bg-surface: #0e1420) - Header line removed
+    fCtx.fillStyle = '#0e1420';
+    fCtx.fillRect(0, 0, 512, 800);
+
+    // Lanyard Slot Cutout
+    fCtx.fillStyle = '#080c12';
+    fCtx.beginPath();
+    fCtx.roundRect(206, 36, 100, 18, 9);
+    fCtx.fill();
+    fCtx.strokeStyle = 'rgba(0, 255, 224, 0.2)';
+    fCtx.lineWidth = 2;
+    fCtx.stroke();
+
+    // Outer Border (--border)
+    fCtx.strokeStyle = 'rgba(0, 255, 224, 0.18)';
+    fCtx.lineWidth = 6;
+    fCtx.strokeRect(18, 18, 476, 764);
+
+    // ID Photo Frame
+    const photoX = 116, photoY = 125, photoW = 280, photoH = 320;
+    fCtx.fillStyle = '#080c12';
+    fCtx.fillRect(photoX, photoY, photoW, photoH);
+
+    if (loadedImg) {
+      fCtx.drawImage(loadedImg, photoX, photoY, photoW, photoH);
+    } else {
+      fCtx.fillStyle = '#6b7a99';
+      fCtx.font = '18px monospace';
+      fCtx.textAlign = 'center';
+      fCtx.fillText('[ PHOTO HERE ]', 256, 290);
+    }
+
+    fCtx.strokeStyle = '#29aa9b';
+    fCtx.lineWidth = 4;
+    fCtx.strokeRect(photoX, photoY, photoW, photoH);
+
+    // Typography
+    fCtx.textAlign = 'center';
+    fCtx.fillStyle = '#e8edf5';
+    fCtx.font = 'bold 30px sans-serif';
+    fCtx.fillText('MARISA CAMUNGGOL', 256, 510);
+
+    fCtx.fillStyle = '#29aa9b';
+    fCtx.font = 'bold 20px monospace';
+    fCtx.fillText('// SYSTEM ARCHITECT', 256, 550);
+
+    fCtx.fillStyle = '#6b7a99';
+    fCtx.font = '16px monospace';
+    fCtx.fillText('AI · AUTOMATION · WEB · HARDWARE', 256, 600);
+
+    // Hint to click/flip
+    fCtx.fillStyle = 'rgba(0, 255, 224, 0.45)';
+    fCtx.font = '14px monospace';
+    fCtx.fillText('[ CLICK TO FLIP CARD ]', 256, 660);
+
+    // Bottom Barcode Strip
+    fCtx.fillStyle = 'rgba(0, 255, 224, 0.2)';
+    for (let x = 96; x < 416; x += 14) {
+      const barW = (x % 28 === 0) ? 8 : 4;
+      fCtx.fillRect(x, 695, barW, 40);
+    }
+
+    frontTexture.needsUpdate = true;
+  }
+
+  // ── 1B. BACKSIDE ID TEXTURE (WITH QR IMAGE & SPECS) ───────────────────
+  const backCanvas = document.createElement('canvas');
+  backCanvas.width = 512;
+  backCanvas.height = 800;
+  const bCtx = backCanvas.getContext('2d');
+  const backTexture = new THREE.CanvasTexture(backCanvas);
+  backTexture.colorSpace = THREE.SRGBColorSpace;
+
+  function drawBackCard(loadedQrImg = null) {
+    // Clean Deep Dark Base (--bg: #080c12)
+    bCtx.fillStyle = '#080c12';
+    bCtx.fillRect(0, 0, 512, 800);
+
+    // Outer Border
+    bCtx.strokeStyle = 'rgba(0, 255, 224, 0.18)';
+    bCtx.lineWidth = 6;
+    bCtx.strokeRect(18, 18, 476, 764);
+
+    // Lanyard Slot Cutout
+    bCtx.fillStyle = '#0e1420';
+    bCtx.beginPath();
+    bCtx.roundRect(206, 36, 100, 18, 9);
+    bCtx.fill();
+    bCtx.strokeStyle = 'rgba(0, 255, 224, 0.2)';
+    bCtx.lineWidth = 2;
+    bCtx.stroke();
+
+    // QR Code Image Frame (Same style as Front ID Photo Frame)
+    const qrSize = 250;
+    const qrX = (512 - qrSize) / 2;
+    const qrY = 175;
+
+    bCtx.fillStyle = '#0e1420';
+    bCtx.fillRect(qrX, qrY, qrSize, qrSize);
+
+    if (loadedQrImg) {
+      bCtx.drawImage(loadedQrImg, qrX, qrY, qrSize, qrSize);
+    } else {
+      bCtx.fillStyle = '#6b7a99';
+      bCtx.font = '18px monospace';
+      bCtx.textAlign = 'center';
+      bCtx.fillText('[ QR HERE ]', 256, qrY + qrSize / 2 + 6);
+    }
+
+    bCtx.strokeStyle = '#29aa9b';
+    bCtx.lineWidth = 4;
+    bCtx.strokeRect(qrX, qrY, qrSize, qrSize);
+
+    // Backside Tech Metadata
+    bCtx.textAlign = 'center';
+    bCtx.fillStyle = '#e8edf5';
+    bCtx.font = 'bold 22px monospace';
+    bCtx.fillText('SCAN TO CONNECT', 256, 495);
+
+    bCtx.fillStyle = '#29aa9b';
+    bCtx.font = '16px monospace';
+    bCtx.fillText('IMUS CITY CAVITE // PH', 256, 535);
+
+    // Security / Clearance Box
+    bCtx.fillStyle = '#0e1420';
+    bCtx.fillRect(64, 595, 384, 95);
+    bCtx.strokeStyle = 'rgba(0, 255, 224, 0.15)';
+    bCtx.lineWidth = 2;
+    bCtx.strokeRect(64, 595, 384, 95);
+
+    bCtx.fillStyle = '#6b7a99';
+    bCtx.font = '14px monospace';
+    bCtx.fillText('MAPUA UNIVERSITY // BS CPE', 256, 630);
+    bCtx.fillText('2027', 256, 660);
+
+    backTexture.needsUpdate = true;
+  }
+
+  // Initialize both card textures and load images
+  drawFrontCard();
+  drawBackCard();
+
+  const textureLoader = new THREE.TextureLoader();
+  textureLoader.load(idImageUrl, (tex) => drawFrontCard(tex.image));
+  textureLoader.load(qrImageUrl, (tex) => drawBackCard(tex.image));
+
+  // ── 2. BUILD THE 3D ID CARD & CLIP MESH ───────────────────────────────
+  const idGroup = new THREE.Group();
+  scene.add(idGroup);
+
+  const cardWidth = 1.65;
+  const cardHeight = 2.55;
+  const cardDepth = 0.05;
+
+  const cardGeo = new THREE.BoxGeometry(cardWidth, cardHeight, cardDepth);
+  const sideMat = new THREE.MeshStandardMaterial({ color: COLORS.surface, roughness: 0.3, metalness: 0.85 });
+  const frontMat = new THREE.MeshStandardMaterial({ map: frontTexture, roughness: 0.25, metalness: 0.15 });
+  const backMat = new THREE.MeshStandardMaterial({ map: backTexture, roughness: 0.25, metalness: 0.15 });
+
+  // Materials order: [Right, Left, Top, Bottom, Front, Back]
+  const cardMesh = new THREE.Mesh(cardGeo, [sideMat, sideMat, sideMat, sideMat, frontMat, backMat]);
+  cardMesh.position.y = -cardHeight / 2;
+  idGroup.add(cardMesh);
+
+  // 3D Edge Highlight (--accent: #29aa9b)
+  const borderEdges = new THREE.EdgesGeometry(cardGeo);
+  const borderLines = new THREE.LineSegments(
+    borderEdges,
+    new THREE.LineBasicMaterial({ color: COLORS.accent, transparent: true, opacity: 0.55 })
+  );
+  cardMesh.add(borderLines);
+
+  // Metal Clasp at Top (--text-muted: #6b7a99)
+  const clipGeo = new THREE.BoxGeometry(0.32, 0.22, 0.08);
+  const clipMat = new THREE.MeshStandardMaterial({ color: COLORS.textMuted, metalness: 0.9, roughness: 0.2 });
+  const clipMesh = new THREE.Mesh(clipGeo, clipMat);
+  clipMesh.position.y = 0.05;
+  idGroup.add(clipMesh);
+
+  // ── 3. VERLET PHYSICS SETUP (LANYARD + CARD) ──────────────────────────
+  const anchorX = window.innerWidth < 768 ? 0 : 2.0;
+  const anchorY = 4.2;
+  const numNodes = 14;
+  const ropeLength = 3.2;
+  const segmentLength = ropeLength / (numNodes - 1);
+
+  const nodes = [];
+  for (let i = 0; i < numNodes; i++) {
+    const y = anchorY - i * segmentLength;
+    const initialSwing = i === numNodes - 1 ? 0.35 : 0;
+    nodes.push({
+      pos: new THREE.Vector3(anchorX + initialSwing, y, 0),
+      oldPos: new THREE.Vector3(anchorX, y, 0),
+      isPinned: i === 0
+    });
+  }
+
+  // Lanyard Ribbon (--bg-surface: #0e1420)
+  const strapWidth = 0.14;
+  const strapGeo = new THREE.PlaneGeometry(strapWidth, 1, 1, numNodes - 1);
+  const strapMat = new THREE.MeshStandardMaterial({
+    color: COLORS.surface,
+    roughness: 0.55,
+    metalness: 0.3,
+    side: THREE.DoubleSide
   });
+  const strapMesh = new THREE.Mesh(strapGeo, strapMat);
+  scene.add(strapMesh);
 
-  const clock = new THREE.Clock();
-  let frameId;
+  // Glowing Center Stitch along Lanyard (--accent: #29aa9b)
+  const stitchCurve = new THREE.CatmullRomCurve3(nodes.map(n => n.pos.clone()));
+  const stitchGeo = new THREE.TubeGeometry(stitchCurve, 32, 0.012, 6, false);
+  const stitchMat = new THREE.MeshBasicMaterial({ color: COLORS.accent, transparent: true, opacity: 0.8 });
+  const stitchMesh = new THREE.Mesh(stitchGeo, stitchMat);
+  scene.add(stitchMesh);
+
+  // ── 4. MOUSE & TOUCH DRAG + CLICK-TO-FLIP INTERACTION ─────────────────
+  const raycaster = new THREE.Raycaster();
+  const pointer = new THREE.Vector2();
+  const downPointer = new THREE.Vector2();
+  const dragPlane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+  const intersectPoint = new THREE.Vector3();
+  const grabOffset = new THREE.Vector3();
+
+  let isDragging = false;
+  let isHovered = false;
+  let downTime = 0;
+  let flipOffset = 0; // Tracks 180-degree (Math.PI) flips!
+
+  function updatePointer(e) {
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    const rect = canvas.getBoundingClientRect();
+    pointer.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+    pointer.y = -((clientY - rect.top) / rect.height) * 2 + 1;
+  }
+
+  function onPointerDown(e) {
+    updatePointer(e);
+    raycaster.setFromCamera(pointer, camera);
+    const intersects = raycaster.intersectObject(cardMesh);
+
+    if (intersects.length > 0) {
+      isDragging = true;
+      downTime = performance.now();
+      downPointer.copy(pointer);
+
+      canvas.style.cursor = 'grabbing';
+      borderLines.material.color.setHex(COLORS.accentGlow);
+      borderLines.material.opacity = 0.95;
+
+      const endNode = nodes[numNodes - 1];
+      dragPlane.setFromNormalAndCoplanarPoint(
+        camera.getWorldDirection(dragPlane.normal),
+        endNode.pos
+      );
+      if (raycaster.ray.intersectPlane(dragPlane, intersectPoint)) {
+        grabOffset.copy(endNode.pos).sub(intersectPoint);
+      }
+    }
+  }
+
+  function onPointerMove(e) {
+    updatePointer(e);
+    raycaster.setFromCamera(pointer, camera);
+
+    if (isDragging) {
+      if (raycaster.ray.intersectPlane(dragPlane, intersectPoint)) {
+        const endNode = nodes[numNodes - 1];
+        const targetPos = intersectPoint.add(grabOffset);
+        endNode.pos.lerp(new THREE.Vector3(targetPos.x, targetPos.y, 0.4), 0.45);
+      }
+    } else {
+      const intersects = raycaster.intersectObject(cardMesh);
+      if (intersects.length > 0) {
+        if (!isHovered) {
+          canvas.style.cursor = 'grab';
+          borderLines.material.opacity = 0.85;
+          isHovered = true;
+        }
+      } else if (isHovered) {
+        canvas.style.cursor = 'default';
+        borderLines.material.opacity = 0.55;
+        isHovered = false;
+      }
+    }
+  }
+
+  function onPointerUp() {
+    if (isDragging) {
+      const elapsed = performance.now() - downTime;
+      const moveDist = pointer.distanceTo(downPointer);
+      const endNode = nodes[numNodes - 1];
+      const vx = endNode.pos.x - endNode.oldPos.x;
+
+      // 1. Quick click/tap -> Flip 180 degrees to show/hide QR backside!
+      if (elapsed < 260 && moveDist < 0.06) {
+        flipOffset += Math.PI;
+        // Give it a tiny physical nudge when flipped
+        endNode.oldPos.z += 0.08;
+      }
+      // 2. Fast horizontal release -> Spin 360 degrees with momentum!
+      else if (Math.abs(vx) > 0.07) {
+        const spins = Math.sign(vx) * Math.PI * 2;
+        flipOffset += spins;
+      }
+
+      isDragging = false;
+      canvas.style.cursor = isHovered ? 'grab' : 'default';
+      borderLines.material.color.setHex(COLORS.accent);
+      borderLines.material.opacity = isHovered ? 0.85 : 0.55;
+    }
+  }
+
+  window.addEventListener('mousedown', onPointerDown);
+  window.addEventListener('mousemove', onPointerMove);
+  window.addEventListener('mouseup', onPointerUp);
+  window.addEventListener('touchstart', onPointerDown, { passive: true });
+  window.addEventListener('touchmove', onPointerMove, { passive: true });
+  window.addEventListener('touchend', onPointerUp);
+
+  // ── 5. COMPLETE PHYSICS & ANIMATION LOOP ──────────────────────────────
+  const gravity = new THREE.Vector3(0, -0.0065, 0);
+  const damping = 0.975;
+  const constraintSteps = 12;
+  let cardRotZ = 0;
+  let cardRotY = 0;
 
   function animate() {
-    frameId = requestAnimationFrame(animate);
-    const t = clock.getElapsedTime();
-    cubeGroup.rotation.y = t * 0.35;
-    cubeGroup.rotation.x = t * 0.18;
-    cubeGroup.position.y = Math.sin(t * 0.7) * 0.18;
-    cRX += (tRX - cRX) * 0.04;
-    cRY += (tRY - cRY) * 0.04;
-    camera.rotation.x = cRX * 0.3;
-    camera.rotation.y = cRY * 0.3;
-    particles.rotation.y = t * 0.04;
-    particles.rotation.x = t * 0.02;
+    requestAnimationFrame(animate);
+
+    // Step A: Verlet Integration
+    for (let i = 0; i < numNodes; i++) {
+      const n = nodes[i];
+      if (n.isPinned) continue;
+      if (isDragging && i === numNodes - 1) continue;
+
+      const vx = (n.pos.x - n.oldPos.x) * damping;
+      const vy = (n.pos.y - n.oldPos.y) * damping;
+      const vz = (n.pos.z - n.oldPos.z) * damping;
+
+      n.oldPos.copy(n.pos);
+      n.pos.x += vx + gravity.x;
+      n.pos.y += vy + gravity.y;
+      n.pos.z += vz + gravity.z;
+    }
+
+    // Step B: Rope Elasticity Constraints
+    for (let step = 0; step < constraintSteps; step++) {
+      for (let i = 0; i < numNodes - 1; i++) {
+        const n1 = nodes[i];
+        const n2 = nodes[i + 1];
+
+        const diff = new THREE.Vector3().subVectors(n2.pos, n1.pos);
+        const dist = diff.length();
+        if (dist === 0) continue;
+
+        const difference = (segmentLength - dist) / dist;
+        const offset = diff.multiplyScalar(difference * 0.5);
+
+        if (!n1.isPinned) n1.pos.sub(offset);
+        if (isDragging && i + 1 === numNodes - 1) {
+          n1.pos.sub(offset);
+        } else {
+          n2.pos.add(offset);
+        }
+      }
+    }
+
+    // Step C: Update Lanyard Strap Geometry
+    const posAttr = strapGeo.attributes.position;
+    for (let i = 0; i < numNodes; i++) {
+      const p = nodes[i].pos;
+      posAttr.setXYZ(i * 2,     p.x - strapWidth / 2, p.y, p.z);
+      posAttr.setXYZ(i * 2 + 1, p.x + strapWidth / 2, p.y, p.z);
+    }
+    posAttr.needsUpdate = true;
+    strapGeo.computeVertexNormals();
+
+    // Update Center Accent Stitch
+    const updatedCurve = new THREE.CatmullRomCurve3(nodes.map(n => n.pos));
+    stitchMesh.geometry.dispose();
+    stitchMesh.geometry = new THREE.TubeGeometry(updatedCurve, 32, 0.012, 6, false);
+
+    // Step D: Sync ID Card Position, Swing Tilt & 360 Flip Rotation
+    const endNode = nodes[numNodes - 1];
+    const prevNode = nodes[numNodes - 3];
+
+    idGroup.position.copy(endNode.pos);
+
+    const dx = endNode.pos.x - prevNode.pos.x;
+    const dy = endNode.pos.y - prevNode.pos.y;
+    const targetRotZ = Math.atan2(dx, -dy) * 0.65;
+    cardRotZ += (targetRotZ - cardRotZ) * 0.15;
+    idGroup.rotation.z = cardRotZ;
+
+    // Combine flipOffset (0 or PI) with drag tilt and natural idle sway
+    const vx = endNode.pos.x - endNode.oldPos.x;
+    const swayY = isDragging ? pointer.x * 0.45 : vx * 4.5 + Math.sin(Date.now() * 0.0015) * 0.12;
+    const targetRotY = flipOffset + swayY;
+    cardRotY += (targetRotY - cardRotY) * 0.08;
+    idGroup.rotation.y = cardRotY;
+
     renderer.render(scene, camera);
   }
+
   animate();
 
+  // ── 6. HANDLE WINDOW RESIZE ───────────────────────────────────────────
   window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
-  }, { passive: true });
-
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden) cancelAnimationFrame(frameId);
-    else { clock.start(); animate(); }
+    nodes[0].pos.x = window.innerWidth < 768 ? 0 : 2.0;
   });
 })();
 
@@ -468,105 +853,6 @@ sections.forEach(s => {
 
 })();
 
-/* ══════════════════════════════════════════════════════════════════════════
-   11. DONATION / PAYMONGO
-   ─────────────────────────────────────────────────────────────────────────
-   Calls: POST ${BACKEND_URL}/create-checkout
-   Backend calls PayMongo Checkout Session API and returns checkoutUrl.
-══════════════════════════════════════════════════════════════════════════ */
-(function initDonation() {
-  const donateBtn      = document.getElementById('donateBtn');
-  const donateBtnText  = donateBtn?.querySelector('.donate-btn-text');
-  const donateSpinner  = document.getElementById('donateSpinner');
-  const customInput    = document.getElementById('customAmount');
-  const amountBtns     = document.querySelectorAll('.amount-btn');
-  const paySuccess     = document.getElementById('paySuccess');
-  const payCancel      = document.getElementById('payCancel');
-
-  if (!donateBtn) return;
-
-  // ── Track selected amount ─────────────────────────────────────────────
-  let selectedAmount = 250; // default
-
-  function updateDonateLabel(amount) {
-    selectedAmount = amount;
-    if (donateBtnText) {
-      donateBtnText.textContent = `Donate ₱${Number(amount).toLocaleString()}`;
-    }
-  }
-
-  // Preset button clicks
-  amountBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      amountBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      if (customInput) customInput.value = '';
-      updateDonateLabel(parseInt(btn.dataset.amount, 10));
-    });
-  });
-
-  // Custom input
-  if (customInput) {
-    customInput.addEventListener('input', () => {
-      const val = parseInt(customInput.value, 10);
-      if (val >= 50) {
-        amountBtns.forEach(b => b.classList.remove('active'));
-        updateDonateLabel(val);
-      }
-    });
-  }
-
-  // ── Show payment result banners if URL has ?payment= param ───────────
-  const urlParams = new URLSearchParams(window.location.search);
-  const payStatus = urlParams.get('payment');
-  if (payStatus === 'success' && paySuccess) {
-    paySuccess.style.display = 'flex';
-    // Scroll to donate section
-    document.getElementById('donate')?.scrollIntoView({ behavior: 'smooth' });
-  } else if (payStatus === 'cancelled' && payCancel) {
-    payCancel.style.display = 'flex';
-    document.getElementById('donate')?.scrollIntoView({ behavior: 'smooth' });
-  }
-
-  // ── Donate button ─────────────────────────────────────────────────────
-  donateBtn.addEventListener('click', async () => {
-    if (selectedAmount < 50) {
-      alert('Minimum donation amount is ₱50.');
-      return;
-    }
-
-    // Loading state
-    donateBtn.disabled   = true;
-    if (donateBtnText)   donateBtnText.textContent = 'Redirecting…';
-    if (donateSpinner)   donateSpinner.classList.add('spinning');
-
-    try {
-      const res = await fetch(`${BACKEND_URL}/create-checkout`, {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount: selectedAmount }),
-      });
-
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.error || `Server error ${res.status}`);
-      }
-
-      const { checkoutUrl } = await res.json();
-      if (!checkoutUrl) throw new Error('No checkout URL received from server.');
-
-      // Redirect to PayMongo hosted checkout
-      window.location.href = checkoutUrl;
-
-    } catch (err) {
-      alert(`Payment error: ${err.message}\n\nMake sure the backend is running at ${BACKEND_URL}`);
-      donateBtn.disabled = false;
-      if (donateBtnText) donateBtnText.textContent = `Donate ₱${Number(selectedAmount).toLocaleString()}`;
-      if (donateSpinner) donateSpinner.classList.remove('spinning');
-    }
-  });
-
-})();
 
 // ─── Image data ───────────────────────────────────────────────────────────
   // Using picsum.photos for beautiful placeholder images
