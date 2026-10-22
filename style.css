@@ -252,7 +252,7 @@ body.cursor-hover .cursor-follower {
   display: flex;
   align-items: center;
   overflow: hidden;
-  user-select: none; /* Prevents accidental text highlighting while dragging the ID */
+  user-select: none; 
   -webkit-user-select: none;
 }
 
@@ -264,8 +264,8 @@ body.cursor-hover .cursor-follower {
   height: 100% !important;
   display: block;
   z-index: 1;
-  pointer-events: auto; /* Captures mouse & touch drags */
-  touch-action: pan-y;  /* Allows vertical page scroll unless grabbing the 3D card */
+  pointer-events: auto; 
+  touch-action: pan-y;  
 }
 
 .hero-content {
@@ -274,7 +274,7 @@ body.cursor-hover .cursor-follower {
   max-width: 680px;
   padding: 0 clamp(1.2rem, 5vw, 3rem);
   margin-left: clamp(1.2rem, 8vw, 8rem);
-  pointer-events: none; /* Lets mouse drags pass through empty space around text */
+  pointer-events: none; 
 }
 
 .hero-tag {

@@ -1,22 +1,3 @@
-/**
- * ═══════════════════════════════════════════════════════════════════════════
- *  PORTFOLIO — script.js  (Enhanced with AI Chatbot + PayMongo donations)
- *  Sections:
- *    1.  Custom Cursor
- *    2.  Navbar (scroll + mobile)
- *    3.  Theme Toggle
- *    4.  Three.js Hero Scene
- *    5.  Scroll Reveal (IntersectionObserver)
- *    6.  Skill Bar Animations
- *    7.  Parallax
- *    8.  Contact Form
- *    9.  Footer Year & Active Nav
- *   10.  AI Chatbot
- *   11.  Donation / PayMongo
- * ═══════════════════════════════════════════════════════════════════════════
- *
- *  BACKEND URL — change this to your deployed server URL in production
- */
 const BACKEND_URL = 'http://localhost:3001';
 
 'use strict';
@@ -128,11 +109,9 @@ themeToggle.addEventListener('click', () => {
   scene.add(rimLight);
 
   // ── 1A. FRONT ID BADGE TEXTURE ────────────────────────────────────────
-  // >>> REPLACE THIS PATH WITH YOUR ID PHOTO <<<
-  const idImageUrl = 'your-id-picture.jpg';
-  const fullBleedPhoto = false; // Set to 'true' if your image is already a full ID card
-
-  // >>> OPTIONAL: REPLACE WITH YOUR OWN QR CODE IMAGE URL <<<
+  // >>> ID PHOTO <<<
+  const idImageUrl = 'pictures/idpic.png';
+  const fullBleedPhoto = false; //'true' if your image is already a full ID card
 
   // >>> REPLACE THIS PATH WITH YOUR QR CODE IMAGE FILE <<<
   const qrImageUrl = 'your-qr-picture.jpg';
@@ -706,10 +685,10 @@ sections.forEach(s => {
 });
 
 /* ══════════════════════════════════════════════════════════════════════════
-   10. AI CHATBOT
+   10. AI CHATBOT & AUTO-CHATTER (HYBRID LLM + LOCAL KNOWLEDGE ENGINE)
    ─────────────────────────────────────────────────────────────────────────
-   Talks to: POST ${BACKEND_URL}/chat
-   Backend uses OpenRouter (free) with Llama 3 8B Instruct.
+   1. Tries POST ${BACKEND_URL}/chat (if BACKEND_URL is configured & online)
+   2. Automatically falls back to the built-in Smart Auto-Chatter Engine
 ══════════════════════════════════════════════════════════════════════════ */
 (function initChatbot() {
   const chatTrigger  = document.getElementById('chatTrigger');
@@ -723,12 +702,142 @@ sections.forEach(s => {
 
   if (!chatTrigger) return;
 
+  // Set to true if you want to use your external backend first, or false for instant local mode
+  const USE_BACKEND_IF_AVAILABLE = typeof BACKEND_URL !== 'undefined' && Boolean(BACKEND_URL);
+
+  // ── MARISA'S KNOWLEDGE BASE & SYSTEM PROMPT ───────────────────────────
+  const MARISA_SYSTEM_PROMPT = `
+You are Marisa Jonnel P. Camunggol's AI portfolio assistant, speaking in the first person ("I", "my", "me") as Marisa.
+Keep responses concise (2–5 short paragraphs or bullet points), warm, confident, and highly professional.
+
+KEY FACTS ABOUT ME (MARISA JONNEL P. CAMUNGGOL):
+- Location: Imus City, Cavite, Philippines.
+- Target Roles: Technical Virtual Assistant, AI/Workflow Automation VA, Executive Assistant, Customer Support Representative, or IT/Tech Support Specialist.
+- Value Proposition: Tech-savvy Computer Engineering student at Mapúa University (Expected Grad: Jan 2028) and former Architecture major (completed 3 years, 2020–2023) combining formal multi-channel customer support experience with AI workflow automation, Notion workspace design, 2D/3D CAD, full-stack web dev, and hardware/electronics repair.
+- Work Experience:
+  1. Customer Support Representative (Pasay, Metro Manila — 2024): Managed high-volume inbound/outbound inquiries across phone, live chat, and email. Used Microsoft Teams for shift handovers & escalations, logged feedback in tracking databases, and specialized in empathy and conflict de-escalation.
+  2. Web Development Intern | GoCrayons Digital Solutions (Silang, Cavite — 2019): Assisted web and game dev teams with bug troubleshooting, QA testing, and documentation.
+- Skills:
+  • AI & Automation: Zapier, Make (Integromat), Gemini API, Automated Daily Briefings, AI Meeting Note-Taking pipelines, OCR Data Extraction.
+  • VA & Admin: Notion, Microsoft Teams, Google Workspace, MS Office, Multi-Channel Ticketing & Live Chat. Typing speed: 41 WPM at 98% accuracy.
+  • Programming & Web: Python, PHP, JavaScript, jQuery, Flutter, Bootstrap, HTML/CSS, MySQL, MongoDB, R, C/C++, Java, GitHub.
+  • Design & CAD: Canva, Procreate, AutoCAD, SketchUp, Lumion, Spatial Planning.
+  • Hardware, IoT & Repair: Laptop/TV/Smart Robot Vacuum diagnostics & component replacement, Raspberry Pi 4, Tang Nano 9K FPGA, Arduino, Verilog, VHDL, YOLOv8, TensorFlow Lite.
+  • Workstation Specs: AMD Ryzen 5 4600H, 16GB RAM, 256GB NVMe SSD + 1TB HDD, NVIDIA GeForce GTX 1650 (4GB).
+- Key Projects:
+  1. AI-Powered Daily Briefing & Meeting Note-Taker (2026): Python script syncing screen capture + audio with Gemini API, Notion, and Zapier.
+  2. Automated Document OCR Extractor (2026): Python, OpenCV & PyTesseract pipeline for reading serial numbers and denomination text.
+  3. FoodLink Donation Platform & Student Violation System (2025–2026): Full-stack apps using Flutter, PHP, MySQL, JS, and Bootstrap.
+  4. Edge Hardware Defect Detection & Digital Logic (2026): YOLOv8/TFLite defect detector + custom 4-bit hex to 7-segment decoder on Tang Nano 9K FPGA.
+  5. Residential Renovation & Space Planning (2023–Present): End-to-end AutoCAD/SketchUp drafting, 3D rendering, and material coordination.
+  6. Technopreneurship Market Analysis Report (2026): Operational and marketing case study on 24 Chicken.
+- Certifications: 13+ Verified Coursera Certifications from IBM, Georgia Tech, Univ. of Colorado Boulder, Johns Hopkins, Duke, KAIST, HKUST, and Rice Univ. (including FPGA Design with HDL, Intro to AI, Data Analysis with R, Linear Circuits, and Engineering Mechanics).
+`.trim();
+
+  // ── SMART LOCAL AUTO-CHATTER ENGINE (ZERO-LATENCY / OFFLINE FALLBACK) ─
+  function generateLocalReply(query) {
+    const q = query.toLowerCase();
+
+    // 1. Projects & Portfolio
+    if (/project|built|portfolio|work sample|app|system|foodlink|ocr/.test(q)) {
+      return `Here are some of the key software, AI, and hardware projects I've built:\n\n` +
+        `• **AI Daily Briefing & Meeting Note-Taker (2026):** A Python pipeline that captures screen + audio and uses the **Gemini API, Notion, and Zapier** to automate meeting summaries.\n` +
+        `• **FoodLink & Student Violation Systems (2025–2026):** Full-stack web and mobile platforms built with **Flutter, PHP, MySQL, JavaScript, and Bootstrap**.\n` +
+        `• **Automated Document OCR Extractor (2026):** Built with **Python, OpenCV, and PyTesseract** to scan and extract serial numbers and denominations.\n` +
+        `• **Edge Defect Detection & FPGA Logic (2026):** A **YOLOv8 / TensorFlow Lite** vision model and digital logic circuits deployed on a **Tang Nano 9K FPGA** & Raspberry Pi 4.\n` +
+        `• **Residential Renovation & CAD Planning (2023–Present):** End-to-end 2D/3D spatial planning using **AutoCAD, SketchUp, and Lumion**.`;
+    }
+
+    // 2. AI & Workflow Automation
+    if (/\bai\b|artificial intelligence|automat|zapier|make|integromat|gemini|note-taker|briefing/.test(q)) {
+      return `I specialize in building practical **AI & Workflow Automations** that save hours of manual admin work:\n\n` +
+        `• **Workflow Tools:** Zapier, Make (Integromat), and custom **Gemini API** integrations.\n` +
+        `• **Custom Pipelines:** I built an **AI Meeting Note-Taker** in Python that synchronizes screen capture and audio into structured **Notion** databases and automated daily email briefings.\n` +
+        `• **Computer Vision & OCR:** I also work with **YOLOv8, TensorFlow Lite, OpenCV, and PyTesseract** for automated document scanning and defect detection.`;
+    }
+
+    // 3. Virtual Assistant, Customer Support & Admin Experience
+    if (/\bva\b|virtual assistant|support|customer|csr|admin|executive|experience|work history|teams|notion/.test(q)) {
+      return `I combine formal **multi-channel Customer Support experience** with advanced technical VA skills:\n\n` +
+        `• **Customer Support Representative (2024):** Managed high-volume inbound and outbound inquiries via **phone, live chat, and email** in Pasay, Metro Manila—handling escalations and shift handovers via **Microsoft Teams**.\n` +
+        `• **Web Dev Intern @ GoCrayons Digital Solutions (2019):** Handled QA testing, bug troubleshooting, and structured project documentation.\n` +
+        `• **Workspace & Admin Mastery:** I design organized systems in **Notion, Google Workspace, and MS Office**, backed by a **41 WPM (98% accuracy)** typing speed and strong conflict de-escalation skills.`;
+    }
+
+    // 4. Workstation, PC Specs, Internet / Hardware Setup or Typing Speed
+    if (/spec|workstation|laptop|pc|computer|ram|ryzen|typing|wpm|setup/.test(q)) {
+      return `My home workstation is fully equipped for heavy multitasking, automation, and 3D/dev workloads:\n\n` +
+        `• **Processor:** AMD Ryzen 5 4600H\n` +
+        `• **Memory:** 16.0 GB RAM\n` +
+        `• **Storage:** 256GB NVMe SSD + 1TB HDD\n` +
+        `• **Graphics:** NVIDIA GeForce GTX 1650 (4 GB)\n` +
+        `• **Typing Speed:** 41 WPM with **98% accuracy**`;
+    }
+
+    // 5. Tech Stack, Skills, Programming & CAD
+    if (/stack|skill|tech|language|code|program|coding|python|cad|design|hardware|repair|fpga/.test(q)) {
+      return `My toolkit spans software, automation, design, and hardware:\n\n` +
+        `• **AI & Automation:** Zapier, Make, Gemini API, Notion, Python Scripting, OCR.\n` +
+        `• **Web & Programming:** Python, PHP, JavaScript, jQuery, Flutter, HTML/CSS, Bootstrap, MySQL, MongoDB, R, C/C++, Java, GitHub.\n` +
+        `• **Design & 3D CAD:** Canva, Procreate, AutoCAD, SketchUp, Lumion.\n` +
+        `• **Hardware, IoT & Repair:** Raspberry Pi 4, Tang Nano 9K FPGA (Verilog/VHDL), Arduino, plus hands-on diagnostics & component repair for laptops, TVs, and smart robot vacuums.`;
+    }
+
+    // 6. Education, Mapúa, Architecture, Certifications
+    if (/educat|school|college|university|mapua|mapúa|degree|architect|student|certif|coursera|study|graduate/.test(q)) {
+      return `Here is my academic background and certification profile:\n\n` +
+        `• **BS Computer Engineering — Mapúa University** (2024–Present | Expected Grad: **Jan 2028**): Focusing on Database Management, Agile/SDLC, Networking, and Microcontrollers.\n` +
+        `• **BS Architecture — Mapúa University** (2020–2023): Completed 3 years of coursework in CAD, 3D rendering, and spatial planning before transitioning to CpE.\n` +
+        `• **STEM Senior High School — IIST Cavite** (2018–2020): Graduated **With Honors**.\n` +
+        `• **13+ Verified Coursera Certifications:** Including *FPGA Design (CU Boulder)*, *Introduction to AI (IBM)*, *Data Analysis with R (IBM)*, *Linear Circuits (Georgia Tech)*, and *Inferential Statistics (Duke)*.`;
+    }
+
+    // 7. Hiring, Availability, Contact, Location, Role Fit
+    if (/hire|hiring|available|availability|contact|reach|email|location|where|rate|job|role|resume/.test(q)) {
+      return `Yes! I am currently **available for hire** and based in **Imus City, Cavite, Philippines** (open to remote roles across time zones).\n\n` +
+        `I am targeting roles as a:\n` +
+        `• **AI / Workflow Automation Virtual Assistant**\n` +
+        `• **Technical or Executive Virtual Assistant**\n` +
+        `• **Customer Support Representative / IT Tech Support Specialist**\n\n` +
+        `Reach out via email **mjcamunggol@gmail.com** , via phone **+639204934921** , or via viber. \n\n` +
+        `I'd love to discuss how I can support your team!`;
+    }
+
+    // 8. Greeting / Who are you
+    if (/^(hi|hello|hey|good|who are you|about you|introduce)/.test(q)) {
+      return `Hi there! 👋 I'm **Marisa Jonnel P. Camunggol**, a Computer Engineering student at **Mapúa University** and former Architecture major based in Cavite, Philippines.\n\n` +
+        `I bridge **multi-channel Customer Support & VA operations** with **AI workflow automation (Zapier, Make, Gemini API), full-stack web development, 2D/3D CAD, and hardware diagnostics**.\n\n` +
+        `What would you like to know about—my **AI automations**, **VA & support experience**, **projects**, or **availability**?`;
+    }
+
+    // 9. Default Comprehensive Fallback
+    return `Great question! As a quick overview of what I bring to the table:\n\n` +
+      `• **Role Focus:** Technical VA, AI/Workflow Automation Specialist, Executive Assistant, & Customer Support / IT Support.\n` +
+      `• **Core Strengths:** Zapier/Make/Gemini API automation, Notion systems, multi-channel customer support (phone/chat/email), full-stack dev (Python/PHP/Flutter/JS), AutoCAD/SketchUp, and electronics repair.\n` +
+      `• **Background:** BS Computer Engineering student (and 3-year Architecture background) at **Mapúa University**, with 13+ Coursera certifications.\n\n` +
+      `Ask me about my **specific projects**, **workstation specs**, **certifications**, or **how to get in touch**!\n\n` +
+      `For personal questions, please leave a message and I'll get back to you as soon as possible.`;
+  }
+
   // ── Conversation history (sent to backend each turn) ──────────────────
-  let conversationHistory = [];
+  let conversationHistory = [
+    { role: 'system', content: MARISA_SYSTEM_PROMPT }
+  ];
 
   // ── Helpers ──────────────────────────────────────────────────────────
   function timeStr() {
     return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  }
+
+  // Renders clean bolding (**text**) and line breaks inside chat bubbles safely
+  function formatBubbleHTML(text) {
+    const escaped = text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+    return escaped
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\n/g, '<br>');
   }
 
   function appendMessage(role, text, isError = false) {
@@ -737,7 +846,7 @@ sections.forEach(s => {
 
     const bubble = document.createElement('div');
     bubble.className = 'msg-bubble' + (isError ? ' error' : '');
-    bubble.textContent = text;
+    bubble.innerHTML = formatBubbleHTML(text);
 
     const time = document.createElement('span');
     time.className = 'msg-time';
@@ -747,7 +856,6 @@ sections.forEach(s => {
     wrapper.appendChild(time);
     chatMessages.appendChild(wrapper);
 
-    // Auto-scroll to bottom
     chatMessages.scrollTop = chatMessages.scrollHeight;
     return bubble;
   }
@@ -775,17 +883,18 @@ sections.forEach(s => {
   suggestions.addEventListener('click', (e) => {
     if (e.target.classList.contains('chip')) {
       sendMessage(e.target.textContent);
-      suggestions.style.display = 'none'; // hide after first use
+      suggestions.style.display = 'none';
     }
   });
 
   // ── Clear chat ────────────────────────────────────────────────────────
   chatClear.addEventListener('click', () => {
-    // Keep only the first greeting
     const msgs = chatMessages.querySelectorAll('.chat-msg');
     msgs.forEach((m, i) => { if (i > 0) m.remove(); });
     suggestions.style.display = 'flex';
-    conversationHistory = [];
+    conversationHistory = [
+      { role: 'system', content: MARISA_SYSTEM_PROMPT }
+    ];
   });
 
   // ── Send on button click or Enter (Shift+Enter = newline) ────────────
@@ -808,53 +917,59 @@ sections.forEach(s => {
     const text = (overrideText || chatInput.value).trim();
     if (!text) return;
 
-    // Show user message
     appendMessage('user', text);
     chatInput.value = '';
     chatInput.style.height = 'auto';
 
-    // Track history
     conversationHistory.push({ role: 'user', content: text });
 
-    // Disable input while waiting
     setInputDisabled(true);
     setTyping(true);
 
     try {
-      const res = await fetch(`${BACKEND_URL}/chat`, {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: conversationHistory }),
-      });
+      let reply = '';
 
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.error || `Server error ${res.status}`);
+      if (USE_BACKEND_IF_AVAILABLE) {
+        const res = await fetch(`${BACKEND_URL}/chat`, {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            system: MARISA_SYSTEM_PROMPT,
+            messages: conversationHistory
+          }),
+        });
+
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        reply = data.reply;
       }
 
-      const data   = await res.json();
-      const reply  = data.reply || 'Sorry, I could not get a response.';
+      // If backend isn't used or returned empty, use local Auto-Chatter with natural typing delay
+      if (!reply) {
+        await new Promise((r) => setTimeout(r, 480));
+        reply = generateLocalReply(text);
+      }
 
-      // Track assistant reply in history
       conversationHistory.push({ role: 'assistant', content: reply });
       setTyping(false);
       appendMessage('bot', reply);
 
     } catch (err) {
+      // Seamless fallback to local Auto-Chatter if backend is offline or asleep!
+      await new Promise((r) => setTimeout(r, 420));
+      const fallbackReply = generateLocalReply(text);
+      conversationHistory.push({ role: 'assistant', content: fallbackReply });
       setTyping(false);
-      appendMessage('bot', `⚠️ ${err.message}. Make sure the backend server is running at ${BACKEND_URL}`, true);
-      // Remove failed user msg from history so conversation stays clean
-      conversationHistory.pop();
+      appendMessage('bot', fallbackReply);
     } finally {
       setInputDisabled(false);
       chatInput.focus();
     }
   }
-
 })();
 
 
-// ─── Image data ───────────────────────────────────────────────────────────
+// ─── Image data for tech stack banner ──────────────────────────────────
   // Using picsum.photos for beautiful placeholder images
   const images1 = [
     { src: 'techstack/python.png'},
