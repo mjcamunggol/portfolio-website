@@ -114,7 +114,7 @@ themeToggle.addEventListener('click', () => {
   const fullBleedPhoto = false; //'true' if your image is already a full ID card
 
   // >>> REPLACE THIS PATH WITH YOUR QR CODE IMAGE FILE <<<
-  const qrImageUrl = 'your-qr-picture.jpg';
+  const qrImageUrl = './pictures/qr-themed.png';
 
   const frontCanvas = document.createElement('canvas');
   frontCanvas.width = 512;
@@ -247,7 +247,7 @@ themeToggle.addEventListener('click', () => {
     bCtx.textAlign = 'center';
     bCtx.fillStyle = '#e8edf5';
     bCtx.font = 'bold 22px monospace';
-    bCtx.fillText('SCAN TO CONNECT', 256, 495);
+    bCtx.fillText('SCAN TO ADD ME ON VIBER', 256, 495);
 
     bCtx.fillStyle = '#29aa9b';
     bCtx.font = '16px monospace';
