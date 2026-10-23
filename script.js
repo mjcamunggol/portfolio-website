@@ -941,14 +941,16 @@ sections.forEach(s => {
 
 function scrollCertificates(direction) {
   const track = document.getElementById('certTrack');
-  
-  const scrollAmount = 270; 
-  
-  track.scrollBy({ 
-    left: direction * scrollAmount, 
-    behavior: 'smooth' 
+  if (!track) return;
+
+  track.scrollBy({
+    left: direction * 270,
+    behavior: 'smooth'
   });
 }
+
+document.querySelector('.left-btn')?.addEventListener('click', () => scrollCertificates(-1));
+document.querySelector('.right-btn')?.addEventListener('click', () => scrollCertificates(1));
 
 const setupViewMore = () => {
   const viewMoreBtn = document.getElementById('viewMoreBtn');
