@@ -1,7 +1,7 @@
 {
   "name": "portfolio-backend",
   "version": "1.0.0",
-  "description": "Backend for AI chatbot and PayMongo payments",
+  "description": "Backend for the portfolio AI chatbot",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

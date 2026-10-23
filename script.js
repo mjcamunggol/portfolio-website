@@ -1,5 +1,7 @@
 'use strict';
 
+window.siteLayoutReady.then(() => {
+
 /* ══════════════════════════════════════════════════════════════════════════
    1. CUSTOM CURSOR
 ══════════════════════════════════════════════════════════════════════════ */
@@ -929,7 +931,8 @@ sections.forEach(s => {
     trackEl.innerHTML = html;
   }
 
-  buildTrack(document.getElementById('track1'), images1);
+  const techStackTrack = document.getElementById('track1');
+  if (techStackTrack) buildTrack(techStackTrack, images1);
 
   // ─── Speed control ────────────────────────────────────────────────────────
   function setSpeed(seconds) {
@@ -947,20 +950,29 @@ function scrollCertificates(direction) {
   });
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    const viewMoreBtn = document.getElementById('viewMoreBtn');
-    const projectsGrid = document.getElementById('projectsGrid');
+const setupViewMore = () => {
+  const viewMoreBtn = document.getElementById('viewMoreBtn');
+  const projectsGrid = document.getElementById('projectsGrid');
 
-    if (viewMoreBtn && projectsGrid) {
-        viewMoreBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            projectsGrid.classList.toggle('show-all');
-            
-            if (projectsGrid.classList.contains('show-all')) {
-                viewMoreBtn.textContent = 'View less';
-            } else {
-                viewMoreBtn.textContent = 'View more';
-            }
-        });
-    }
+  if (viewMoreBtn && projectsGrid) {
+    viewMoreBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      projectsGrid.classList.toggle('show-all');
+
+      if (projectsGrid.classList.contains('show-all')) {
+        viewMoreBtn.textContent = 'View less';
+      } else {
+        viewMoreBtn.textContent = 'View more';
+      }
+    });
+  }
+};
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', setupViewMore);
+} else {
+  setupViewMore();
+}
+}).catch(error => {
+  console.error('Unable to initialize the portfolio because its shared layout did not load.', error);
 });

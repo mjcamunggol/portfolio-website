@@ -4,14 +4,12 @@
  *
  *  Endpoints:
  *    POST /chat             → AI chatbot via OpenRouter (free Llama 3 model)
- *    POST /create-checkout  → PayMongo checkout session
  *    GET  /health           → health check
  *
  *  Setup:
- *    1. cp .env.example .env
- *    2. Fill in your API keys in .env
- *    3. npm install
- *    4. npm run dev  (or node server.js)
+ *    1. Create a .env file with your OPENROUTER_API_KEY
+ *    2. npm install
+ *    3. npm run dev  (or node server.js)
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
@@ -159,101 +157,6 @@ app.post('/chat', async (req, res) => {
 });
 
 // ══════════════════════════════════════════════════════════════════════════
-//  ROUTE: POST /create-checkout
-//  ─────────────────────────────
-//  Creates a PayMongo Checkout Session and returns the hosted checkout URL.
-//
-//  PayMongo setup:
-//  1. Create account at https://dashboard.paymongo.com
-//  2. Get your SECRET key from Developers → API Keys
-//  3. For TEST mode: use sk_test_... key
-//  4. For LIVE mode: use sk_live_... key
-//  5. Paste secret key in .env as PAYMONGO_SECRET_KEY
-//
-//  Payment methods supported: gcash, card, grab_pay, paymaya
-//  (enable these in your PayMongo dashboard first)
-// ══════════════════════════════════════════════════════════════════════════
-app.post('/create-checkout', async (req, res) => {
-  try {
-    const { amount } = req.body;
-
-    if (!amount || isNaN(amount) || amount < 50) {
-      return res.status(400).json({ error: 'amount must be a number >= 50 (PHP)' });
-    }
-
-    if (!process.env.PAYMONGO_SECRET_KEY) {
-      return res.status(500).json({ error: 'PAYMONGO_SECRET_KEY is not set in .env' });
-    }
-
-    const amountInCentavos = Math.round(parseFloat(amount) * 100);
-
-    // Build success and cancel URLs — must be publicly accessible
-    // In development: use ngrok or similar to expose localhost
-    const baseUrl   = process.env.FRONTEND_URL || 'http://localhost:3000';
-    const successUrl = `${baseUrl}/#donate?payment=success`;
-    const cancelUrl  = `${baseUrl}/#donate?payment=cancelled`;
-
-    // PayMongo Checkout Session API
-    // Docs: https://developers.paymongo.com/reference/checkout-session-resource
-    const response = await axios.post(
-      'https://api.paymongo.com/v1/checkout_sessions',
-      {
-        data: {
-          attributes: {
-            billing: {
-              name:  'Portfolio Donor',
-              email: 'donor@example.com', // Optional — PayMongo will ask user
-            },
-            send_email_receipt: true,
-            show_description:   true,
-            show_line_items:    true,
-            cancel_url:  cancelUrl,
-            success_url: successUrl,
-            description: 'Support my open-source work and student projects!',
-            line_items: [
-              {
-                currency:    'PHP',
-                amount:      amountInCentavos,
-                name:        'Portfolio Donation',
-                description: 'Donation to support development projects',
-                quantity:    1,
-              },
-            ],
-            payment_method_types: [
-              'gcash',
-              'card',
-              'grab_pay',
-              // 'paymaya', // uncomment if enabled in your PayMongo dashboard
-            ],
-          },
-        },
-      },
-      {
-        headers: {
-          'Authorization': `Basic ${Buffer.from(process.env.PAYMONGO_SECRET_KEY + ':').toString('base64')}`,
-          'Content-Type': 'application/json',
-        },
-        timeout: 15000,
-      }
-    );
-
-    const checkoutUrl = response.data?.data?.attributes?.checkout_url;
-    if (!checkoutUrl) throw new Error('PayMongo did not return a checkout URL');
-
-    res.json({ checkoutUrl });
-
-  } catch (err) {
-    console.error('[/create-checkout] Error:', err.response?.data || err.message);
-    const status = err.response?.status || 500;
-    const msg    = err.response?.data?.errors?.[0]?.detail
-      || err.response?.data?.message
-      || err.message
-      || 'Payment error';
-    res.status(status).json({ error: msg });
-  }
-});
-
-// ══════════════════════════════════════════════════════════════════════════
 //  ROUTE: GET /health
 // ══════════════════════════════════════════════════════════════════════════
 app.get('/health', (req, res) => {
@@ -262,7 +165,6 @@ app.get('/health', (req, res) => {
     timestamp: new Date().toISOString(),
     env: {
       openrouter: !!process.env.OPENROUTER_API_KEY,
-      paymongo:   !!process.env.PAYMONGO_SECRET_KEY,
     },
   });
 });
@@ -271,6 +173,5 @@ app.get('/health', (req, res) => {
 app.listen(PORT, () => {
   console.log(`\n✅ Portfolio backend running on http://localhost:${PORT}`);
   console.log(`   OpenRouter API key: ${process.env.OPENROUTER_API_KEY ? '✓ set' : '✗ MISSING'}`);
-  console.log(`   PayMongo key:       ${process.env.PAYMONGO_SECRET_KEY ? '✓ set' : '✗ MISSING'}`);
   console.log(`\n   Health check: http://localhost:${PORT}/health\n`);
 });
