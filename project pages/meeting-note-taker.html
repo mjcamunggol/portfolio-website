@@ -3,16 +3,118 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Marisa — System Architect</title>
+  <title>Marisa — Auto Note-Taker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="icon" type="image/png" href="./pictures/MC.png">
 </head>
 <body>
   <div class="cursor" id="cursor"></div>
   <div class="cursor-follower" id="cursorFollower"></div>
+
   <div data-shared-header></div>
   <div data-shared-mobile-nav></div>
-  <main></main>
+
+  <section class="section about" id="about">
+    <div class="container" style="margin-top: 5%;">
+        <a class="hero-tag" href="../index.html#projects"> &lt; back</a>
+        <h1 class="section-title" style="margin-top: 5%;">Auto Note-Taker: Building an AI-Powered Desktop Lecture Assistant</h1>
+        
+        <br><img src="../pictures/note_taker_demo.png" alt="Auto Note-Taker Demo">
+
+        <br> <a href="https://github.com/yourusername/auto-note-taker" class="social-link" target="_blank" rel="noopener noreferrer">See in GitHub ↗</a>
+        
+        <br><br><p>Online lectures and virtual meetings are great, but trying to actively listen while frantically typing notes is a struggle. You either miss what the speaker is saying, or you miss writing down what's on the slide.<br><br>I wanted to solve this by building a lightweight, "always-on-top" desktop application that does the note-taking for me. It needed to listen to the computer's internal audio, read the text on the screen, and use AI to automatically organize the raw data into perfect study guides.<br><br>Here is how I built an AI note-taker using Python, OCR, and the Gemini API.</p>
+        
+        <br><h3>Step 1: Intercepting Desktop Audio (WASAPI Loopback)</h3>
+        <p>The first challenge was audio. Standard speech recognition libraries default to external microphones, which means the app would pick up my keyboard clicks and struggle to hear the lecture through my speakers.<br><br>To fix this, I bypassed the microphone entirely. I integrated <code>pyaudiowpatch</code> to tap directly into the Windows Audio Session API (WASAPI) loopback. This allowed the app to intercept the internal stereo audio stream heading to the speakers and feed it directly into Google's speech recognition engine for incredibly accurate, real-time transcription.</p>
+        <br>
+        
+        <br><h3>Step 2: Silent Screen Scraping with OCR</h3>
+        <p>Lecturers often put vital information on slides without reading it out loud. To capture this, the app needed eyes.<br><br>I used the <code>mss</code> library to target specific monitors (allowing me to keep the lecture on my second screen while taking tests or working on my primary screen) and took a silent screenshot every 8 seconds. From there, I passed the image through Tesseract OCR (Optical Character Recognition) to extract the text. I also wrote a custom filtering script to ignore repetitive UI elements like watermarks and search bars, ensuring only the actual lecture content was saved.</p>
+        
+        <br><h3>Step 3: Structuring the Mess with Gemini AI</h3>
+        <p>By the end of a lecture, the raw output is a massive, unstructured wall of transcribed audio and scraped screen text. It's accurate, but completely unreadable.<br><br>To transform this data, I integrated the new <code>google-genai</code> Python SDK. When the user clicks "Clean up with AI," the app sends the messy transcript to the Gemini 2.5 Flash model. I engineered the prompt to parse the context, fix broken sentences, remove duplicates, and output a beautifully formatted, bulleted Markdown study guide directly into the UI.</p>
+        <br>
+        
+        <br><h3>The Result</h3>
+        <p>The final product is a seamless, featherweight desktop widget built with Python's <code>tkinter</code>. It pins itself to the top of your screen so it never gets lost behind browser tabs.<br><br>You simply hit "Record" at the start of the class, let it run silently in the background alongside OBS or your browser, and hit "Clean up with AI" when it's over. This project was a fantastic deep dive into multi-threading, custom audio streams, computer vision (OCR), and LLM API integrations.</p>
+          <br>
+          <div style="display: flex; gap: 10px;">
+            <img src="../pictures/raw_notes.png" alt="Raw Messy Output" style="width: 50%;">
+            <img src="../pictures/ai_formatted_notes.png" alt="Clean AI Formatted Output" style="width: 50%;">
+          </div>
+    </div>
+  </section>
+
   <div data-shared-footer></div>
+
+  <!-- AI CHATBOT -->
+  <button class="chat-trigger" id="chatTrigger" aria-label="Open AI Assistant">
+    <span class="chat-trigger-icon open-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+      </svg>
+    </span>
+    <span class="chat-trigger-icon close-icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </span>
+    <span class="chat-pulse"></span>
+  </button>
+
+  <div class="chat-window glass" id="chatWindow" role="dialog" aria-label="AI Portfolio Assistant">
+    <div class="chat-header">
+      <div class="chat-header-info">
+        <div class="chat-avatar">
+          <span>AI</span>
+          <span class="chat-online-dot"></span>
+        </div>
+        <div>
+          <p class="chat-name">Portfolio Assistant</p>
+          <p class="chat-status">Powered by Llama 3 · Online</p>
+        </div>
+      </div>
+      <button class="chat-clear" id="chatClear" title="Clear chat">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="3 6 5 6 21 6"/>
+          <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+          <path d="M10 11v6M14 11v6"/>
+          <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+        </svg>
+      </button>
+    </div>
+    <div class="chat-messages" id="chatMessages">
+      <div class="chat-msg bot">
+        <div class="msg-bubble">
+          👋 Hi! Marisa here. Ask me anything about my projects, skills, or background!
+        </div>
+        <span class="msg-time">Just now</span>
+      </div>
+      <div class="chat-suggestions" id="chatSuggestions">
+        <button class="chip">What projects have you built?</button>
+        <button class="chip">Tell me about your AI work</button>
+        <button class="chip">What tech stack do you use?</button>
+        <button class="chip">Are you available for hire?</button>
+      </div>
+    </div>
+    <div class="chat-typing" id="chatTyping">
+      <span></span><span></span><span></span>
+    </div>
+    <div class="chat-input-area">
+      <textarea class="chat-input" id="chatInput" placeholder="Ask anything about my work..." rows="1" aria-label="Type your message"></textarea>
+      <button class="chat-send" id="chatSend" aria-label="Send message">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
   <script src="../shared-layout.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
   <script src="../script.js"></script>
