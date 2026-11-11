@@ -708,88 +708,35 @@ sections.forEach(s => {
     if (chatTrigger.dataset.bound === 'true') return;
     chatTrigger.dataset.bound = 'true';
 
-    // ── SMART AUTO-CHATTER KNOWLEDGE ENGINE (MARISA'S PROFILE) ──────────
-    function generateLocalReply(query) {
-      const q = query.toLowerCase();
+    // ── GEMINI API CONFIGURATION ─────────────────────────────────────────
+    // No API key needed here! Cloudflare handles it on the server.
+    const API_URL = '/api/chat';
 
-      // 1. Projects & Portfolio
-      if (/project|built|portfolio|work sample|app|system|foodlink|ocr|24 chicken|renovation/.test(q)) {
-        return `Here are the key software, AI, and hardware projects I've built:\n\n` +
-          `• **AI Daily Briefing & Meeting Note-Taker (2026):** Python pipeline syncing screen capture + audio with the **Gemini API, Notion, and Zapier** to automate daily summaries.\n` +
-          `• **FoodLink & Student Violation Systems (2025–2026):** Full-stack web platforms built with **Flutter, PHP, MySQL, JavaScript, and Bootstrap**.\n` +
-          `• **Automated Document OCR Extractor (2026):** **Python, OpenCV, and PyTesseract** pipeline for scanning serial numbers and denominations.\n` +
-          `• **Edge Defect Detection & FPGA Logic (2026):** **YOLOv8 / TensorFlow Lite** vision model + custom 4-bit hex to 7-segment decoder on a **Tang Nano 9K FPGA**.\n` +
-          `• **Residential Renovation & Space Planning (2023–Present):** End-to-end **AutoCAD, SketchUp, and Lumion** 2D/3D design and material coordination.`;
-      }
+    // ── SYSTEM INSTRUCTIONS (MARISA'S PROFILE CONTEXT) ───────────────────
+    const systemInstruction = {
+      role: "model",
+      parts: [{
+        text: `You are the AI portfolio assistant for Marisa Jonnel P. Camunggol, a Computer Engineering student at Mapúa University (Expected Grad: Jan 2028) based in Imus City, Cavite.
+        
+        Use this knowledge to answer questions about her:
+        - Target Roles: Technical VA, AI/Workflow Automation VA, Executive Assistant, Customer Support Rep.
+        - Tech Stack: Zapier, Make, Gemini API, Notion, Python, PHP, Flutter, JS, MySQL, AutoCAD, SketchUp, Lumion.
+        - Hardware/Repair: Raspberry Pi 4, Tang Nano 9K FPGA (Verilog/VHDL), Arduino, and component repair for laptops, TVs, and smart vacuums.
+        - Workstation Specs: AMD Ryzen 5 4600H, 16GB RAM, 256GB NVMe SSD + 1TB HDD, NVIDIA GTX 1650 (4 GB). Typing: 41 WPM (98% accuracy).
+        - Key Projects: 
+          1. AI Daily Briefing & Meeting Note-Taker (Python, Gemini API, Notion, Zapier).
+          2. Edge Defect Detection & FPGA Logic (YOLOv8, TF Lite, Tang Nano 9K).
+          3. FoodLink & Student Violation Systems (Flutter, PHP, MySQL).
+          4. Automated Document OCR Extractor (Python, OpenCV, PyTesseract).
+          5. Residential Renovation & Space Planning (AutoCAD, SketchUp).
+        - Work Experience: Customer Support Rep (2024, Pasay - MS Teams, Live Chat, Email), Web Dev Intern (2019).
+        
+        Keep your answers concise, friendly, and formatted with markdown (bolding key tech terms). If asked for contact info, tell them to use the Get in Touch section on the page.`
+      }]
+    };
 
-      // 2. AI & Workflow Automation
-      if (/\bai\b|artificial intelligence|automat|zapier|make|integromat|gemini|note-taker|briefing|workflow/.test(q)) {
-        return `I specialize in building **AI & Workflow Automations** that eliminate repetitive manual tasks:\n\n` +
-          `• **Automation Platforms:** **Zapier, Make (Integromat)**, and custom **Gemini API** pipelines.\n` +
-          `• **AI Meeting & Briefing Systems:** Built a custom Python tool that records screen + audio and routes structured action items directly into **Notion**.\n` +
-          `• **Computer Vision & OCR:** Experienced with **YOLOv8, TensorFlow Lite, OpenCV, and PyTesseract** for automated document data extraction.`;
-      }
-
-      // 3. Work Experience
-      if (/\bva\b|virtual assistant|support|customer|csr|admin|executive|experience|work|job|intern|teams|notion/.test(q)) {
-        return `I combine formal **multi-channel Customer Support experience** with technical Virtual Assistant & engineering skills:\n\n` +
-          `• **Customer Support Representative (Pasay, Metro Manila — 2024):** Managed high-volume inbound/outbound inquiries across **phone, live chat, and email**. Handled team coordination, shift handovers, and escalations via **Microsoft Teams** with a focus on empathy and rapid resolution.\n` +
-          `• **Web Development Intern | GoCrayons Digital Solutions (2019):** Supported web and game dev teams with bug troubleshooting, QA testing, and documentation.\n` +
-          `• **Workspace Organization:** Advanced setup & database management in **Notion, Google Workspace, and MS Office**.`;
-      }
-
-      // 4. Workstation Specs
-      if (/spec|workstation|laptop|pc|computer|ram|ryzen|nvidia|gtx|typing|wpm|setup|hardware spec/.test(q)) {
-        return `Here are my workstation and typing specifications:\n\n` +
-          `• **Processor:** AMD Ryzen 5 4600H\n` +
-          `• **Memory:** 16.0 GB RAM\n` +
-          `• **Storage:** 256GB NVMe SSD + 1TB HDD\n` +
-          `• **Graphics:** NVIDIA GeForce GTX 1650 (4 GB)\n` +
-          `• **Typing Speed:** **41 WPM with 98% accuracy**`;
-      }
-
-      // 5. Tech Stack & Hardware Repair
-      if (/stack|skill|tech|language|code|program|coding|python|php|flutter|cad|design|repair|fpga|arduino|iot/.test(q)) {
-        return `My technical stack covers software, automation, 3D design, and hardware:\n\n` +
-          `• **AI & Automation:** Zapier, Make, Gemini API, Notion, OCR Data Extraction.\n` +
-          `• **Programming & Web:** Python, PHP, JavaScript, jQuery, Flutter, Bootstrap, HTML/CSS, MySQL, MongoDB, R, C/C++, Java, GitHub.\n` +
-          `• **Design & CAD:** Canva, Procreate, AutoCAD, SketchUp, Lumion.\n` +
-          `• **Hardware, IoT & Repair:** Raspberry Pi 4, Tang Nano 9K FPGA (Verilog/VHDL), Arduino, plus hands-on diagnostics & component repair for **laptops, TVs, and smart robot vacuums**.`;
-      }
-
-      // 6. Education & Certifications
-      if (/educat|school|college|university|mapua|mapúa|degree|architect|student|certif|coursera|graduate/.test(q)) {
-        return `Here is my educational background and certification list:\n\n` +
-          `• **BS Computer Engineering — Mapúa University** (2024–Present | Expected Grad: **Jan 2028**): Focus on Database Management, Agile/SDLC, Networking, and Microcontrollers.\n` +
-          `• **BS Architecture — Mapúa University** (2020–2023): Completed 3 years of coursework in CAD, 3D rendering, and project planning.\n` +
-          `• **Senior High School (STEM) — IIST Cavite** (2018–2020): Graduated **With Honors**.\n` +
-          `• **Verified Coursera Certifications:** *FPGA Design with HDL (CU Boulder)*, *Intro to AI (IBM)*, *Data Analysis with R (IBM)*, *Linear Circuits (Georgia Tech)*, *Vector Calculus (Johns Hopkins)*, *Inferential Statistics (Duke)*, and *Mechanics of Materials I–III (Georgia Tech/Rice)*.`;
-      }
-
-      // 7. Contact & Location
-      if (/hire|hiring|available|availability|contact|reach|email|location|where|rate|resume|cv/.test(q)) {
-        return `Yes! I am **available for hire** and based in **Imus City, Cavite, Philippines**.\n\n` +
-          `I am looking for opportunities as a:\n` +
-          `• **Technical Virtual Assistant / AI & Workflow Automation VA**\n` +
-          `• **Executive Assistant**\n` +
-          `• **Customer Support Representative / IT & Tech Support Specialist**\n\n` +
-          `You can reach me directly using the **Get in Touch / Contact** section on this page!`;
-      }
-
-      // 8. Greeting
-      if (/^(hi|hello|hey|good|who are you|about you|introduce|marisa)/.test(q)) {
-        return `Hi! 👋 I'm **Marisa Jonnel P. Camunggol**, a Computer Engineering student at **Mapúa University** and former Architecture major from Cavite, Philippines.\n\n` +
-          `I combine formal **multi-channel Customer Support experience** with **AI workflow automation (Zapier, Make, Gemini API), Notion organization, full-stack web dev, 2D/3D CAD, and electronics repair**.\n\n` +
-          `Ask me about my **projects**, **AI automations**, **VA & support background**, **workstation specs**, or **availability**!`;
-      }
-
-      // 9. Default Overview
-      return `Here's a quick snapshot of how I can help your team:\n\n` +
-        `• **Target Roles:** Technical VA, AI/Workflow Automation VA, Executive Assistant, Customer Support Rep, or IT Support Specialist.\n` +
-        `• **Core Toolkit:** Zapier, Make, Gemini API, Notion, MS Teams, Python, PHP, Flutter, JS, MySQL, AutoCAD/SketchUp, and hardware repair.\n` +
-        `• **Experience & Education:** 2024 Multi-Channel Customer Support Rep, 2019 Web Dev Intern, and Mapúa University CpE student (Expected Grad: Jan 2028).\n\n` +
-        `Try asking me: *"What projects have you built?"*, *"Tell me about your AI work"*, or *"What are your PC & typing specs?"*`;
-    }
+    // Store conversation history so Gemini remembers context
+    let chatHistory = [];
 
     // ── Helpers ──────────────────────────────────────────────────────────
     function timeStr() {
@@ -797,12 +744,14 @@ sections.forEach(s => {
     }
 
     function formatBubbleHTML(text) {
+      // Basic markdown to HTML conversion for bold text and line breaks
       const escaped = text
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;');
       return escaped
         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
         .replace(/\n/g, '<br>');
     }
 
@@ -863,6 +812,7 @@ sections.forEach(s => {
         const msgs = chatMessages.querySelectorAll('.chat-msg');
         msgs.forEach((m, i) => { if (i > 0) m.remove(); });
         if (suggestions) suggestions.style.display = 'flex';
+        chatHistory = []; // Clear AI memory
       });
     }
 
@@ -880,8 +830,8 @@ sections.forEach(s => {
       chatInput.style.height = Math.min(chatInput.scrollHeight, 100) + 'px';
     });
 
-    // ── Instant Local Send Function ──────────────────────────────────────
-    function sendMessage(overrideText) {
+    // ── GEMINI API CALL FUNCTION ─────────────────────────────────────────
+    async function sendMessage(overrideText) {
       const text = (typeof overrideText === 'string' ? overrideText : chatInput.value).trim();
       if (!text) return;
 
@@ -892,13 +842,50 @@ sections.forEach(s => {
       setInputDisabled(true);
       setTyping(true);
 
-      setTimeout(() => {
-        const reply = generateLocalReply(text);
+      // Add user message to history
+      chatHistory.push({
+        role: "user",
+        parts: [{ text: text }]
+      });
+
+      try {
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            system_instruction: systemInstruction,
+            contents: chatHistory,
+            generationConfig: {
+              temperature: 0.7,
+              maxOutputTokens: 500,
+            }
+          })
+        });
+
+        if (!response.ok) throw new Error('API request failed');
+
+        const data = await response.json();
+        const botReply = data.candidates[0].content.parts[0].text;
+
+        // Add bot reply to history
+        chatHistory.push({
+          role: "model",
+          parts: [{ text: botReply }]
+        });
+
         setTyping(false);
-        appendMessage('bot', reply);
+        appendMessage('bot', botReply);
+
+      } catch (error) {
+        console.error("Gemini API Error:", error);
+        setTyping(false);
+        appendMessage('bot', "I'm having trouble connecting to my AI brain right now. Please try again later!", true);
+        // Remove the failed user message from history so it doesn't break future requests
+        chatHistory.pop();
+      } finally {
         setInputDisabled(false);
         chatInput.focus();
-      }, 420);
+      }
     }
   }
 
