@@ -23,7 +23,7 @@
         <a class="hero-tag" href="../index.html#projects"> &lt; back</a>
         <h1 class="section-title" style="margin-top: 5%;">Tindahan POS: A Cloud-Synced Retail Engine Built for Local Sari-Sari Stores</h1>
         
-        <br><img src="../pictures/tpos-hero.png" alt="Tindahan POS Interface">
+        <br><img src="../pictures/tpos-hero.gif" alt="Tindahan POS Interface">
 
         <br> <a href="https://github.com/mjcamunggol/TPOS" class="social-link" target="_blank" rel="noopener noreferrer">See in GitHub ↗</a>
         
@@ -32,7 +32,7 @@
         <br><h3>Step 1: The Zero-Hardware Architecture</h3>
         <p>Small store owners operate on paper-thin margins. Telling them to buy a ₱15,000 Android tablet and Bluetooth receipt printer just to run software is an immediate dealbreaker.<br><br>I architected TPOS as a Progressive Web Application (PWA) using React, Vite, and Tailwind CSS. Instead of requiring proprietary hardware, the system turns any cheap Android smartphone or old laptop into a fully functional register. For barcode scanning, I integrated a native browser <code>BarcodeDetector</code> polyfill that accesses the phone's back camera, running a continuous detection loop with a 2-second anti-double-scan cooldown. No hardware investment required.</p>
         
-        <br><img src="../pictures/tpos-scan.png" alt="Mobile Barcode Scanner Feature">
+        <br><img src="../pictures/tpos-scan.jpg" alt="Mobile Barcode Scanner Feature">
         
         <br><h3>Step 2: Automating Neighborhood Workflows</h3>
         <p>A sari-sari store operates on highly specific cultural workflows. I built custom algorithms to handle these edge cases natively:<br><br>
@@ -43,14 +43,13 @@
         <br><h3>Step 3: Serverless Cloud Syncing</h3>
         <p>To keep the platform completely free for the merchant during the MVP phase, I bypassed expensive backend hosting and built a serverless middleware using Google Apps Script (GAS).<br><br>When a transaction occurs on the React frontend, it updates a local <code>localStorage</code> queue immediately for a snappy user experience, then asynchronously fires a JSON payload to a Google Apps Script endpoint. To prevent data collisions when two family members use the app simultaneously on different phones, I implemented <code>LockService</code> in the backend to serialize concurrent requests, ensuring inventory arrays merge cleanly in the cloud before updating the master Google Sheet database.</p>
         
-        <br><img src="../pictures/tpos-dashboard.png" alt="Multi-device Dashboard">
+        <br><img src="../pictures/tpos-dashboard.gif" alt="Multi-device Dashboard">
         
         <br><h3>The Result</h3>
         <p>TPOS successfully handles the messy, complex reality of neighborhood retail. The dashboard aggregates real-time sales and capital recovery metrics across all connected devices, filtering them dynamically by day, week, month, or year.<br><br>Building this project was a masterclass in pragmatic software design: proving that the best retail software isn't necessarily the one with the most enterprise features, but the one that adapts seamlessly to the user's actual environment.</p>
           <br>
           <div style="display: flex;">
-            <img src="../pictures/tpos-mobile1.png" style="width: 50%; padding-right: 5px;">
-            <img src="../pictures/tpos-mobile2.png" style="width: 50%; padding-left: 5px;">
+            <img src="../pictures/tpos-views.jpg">
           </div>
     </div>
   </section>
