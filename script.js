@@ -714,7 +714,6 @@ sections.forEach(s => {
 
     // ── SYSTEM INSTRUCTIONS (MARISA'S PROFILE CONTEXT) ───────────────────
     const systemInstruction = {
-      role: "model",
       parts: [{
         text: `You are the AI portfolio assistant for Marisa Jonnel P. Camunggol, a Computer Engineering student at Mapúa University (Expected Grad: Jan 2028) based in Imus City, Cavite.
         
