@@ -862,9 +862,20 @@ sections.forEach(s => {
           })
         });
 
-        if (!response.ok) throw new Error('API request failed');
-
         const data = await response.json();
+
+        // 1. Check if Cloudflare or Gemini returned an error payload
+        if (data.error) {
+          console.error("Detailed API Error:", data.error);
+          throw new Error(data.error.message || JSON.stringify(data.error));
+        }
+
+        // 2. Safety check to ensure candidates exist before reading [0]
+        if (!data.candidates || data.candidates.length === 0) {
+          console.error("Unexpected empty response format:", data);
+          throw new Error("No response candidates returned.");
+        }
+
         const botReply = data.candidates[0].content.parts[0].text;
 
         // Add bot reply to history
@@ -880,7 +891,6 @@ sections.forEach(s => {
         console.error("Gemini API Error:", error);
         setTyping(false);
         appendMessage('bot', "I'm having trouble connecting to my AI brain right now. Please try again later!", true);
-        // Remove the failed user message from history so it doesn't break future requests
         chatHistory.pop();
       } finally {
         setInputDisabled(false);
